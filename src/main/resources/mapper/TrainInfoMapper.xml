@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cpnvisualsystem.mapper.TrainInfoMapper">
+    <resultMap id="BaseResultMap" type="org.cpnvisualsystem.entity.TrainInfo">
+        <id column="id" property="id" />
+        <result column="cluster_id" property="clusterId" />
+        <result column="position" property="position" />
+        <result column="speed" property="speed" />
+        <result column="carriage_count" property="carriageCount" />
+        <result column="train_number" property="trainNumber" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, cluster_id, position, speed, carriage_count, train_number
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM train_info
+        WHERE id = #{id}
+    </select>
+</mapper>
