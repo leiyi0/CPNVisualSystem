@@ -3,6 +3,7 @@ package org.cpnvisualsystem.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.TaskInfoVo;
 
 import java.util.List;
 
@@ -27,4 +28,18 @@ public interface TaskInfoMapper {
      * 根据设备ID查询发起的关联任务
      */
     List<TaskInfo> selectTasksByDeviceId(@Param("deviceId") Integer deviceId);
+
+    /**
+     * 分页并可按状态/名称筛选任务列表
+     */
+    List<TaskInfo> selectTasksByPage(@Param("offset") Integer offset,
+                                       @Param("limit") Integer limit,
+                                       @Param("state") String state,
+                                       @Param("taskName") String taskName);
+
+    /**
+     * 根据筛选条件统计任务总数
+     */
+    Integer countTasksByFilter(@Param("state") String state,
+                               @Param("taskName") String taskName);
 }

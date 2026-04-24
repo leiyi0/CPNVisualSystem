@@ -18,6 +18,12 @@ public class ClusterController {
         return R.ok(clusterInfoService.getClusterById(clusterId));
     }
 
+    // 2. 获取集群预览列表
+    @GetMapping("/list")
+    public R<?> listClusters() {
+        return R.ok(clusterInfoService.getAllClusters());
+    }
+
     // 3. 获取集群任务预览列表
     @GetMapping("/tasks")
     public R<?> getClusterTasks(@RequestParam("cluster_id") Integer clusterId) {

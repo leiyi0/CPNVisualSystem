@@ -9,6 +9,10 @@ import java.util.List;
 @Mapper
 public interface TrainInfoMapper {
     /**
+     * 查询列车数量
+     */
+    Integer countTrains();
+    /**
      * 根据ID查询列车基本信息
      */
     TrainInfo selectById(@Param("id") Integer id);

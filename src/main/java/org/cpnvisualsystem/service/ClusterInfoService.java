@@ -10,4 +10,5 @@ public interface ClusterInfoService {
     ClusterInfo getClusterById(Integer clusterId);
     List<TaskInfo> getTasksByClusterId(Integer clusterId);
     List<TrainInfo> getTrainsByClusterId(Integer clusterId);
+    List<ClusterInfo> getAllClusters();
 }

@@ -3,17 +3,28 @@
 <mapper namespace="org.cpnvisualsystem.mapper.ClusterInfoMapper">
     <resultMap id="BaseResultMap" type="org.cpnvisualsystem.entity.ClusterInfo">
         <id column="id" property="id" />
+        <result column="cluster_code" property="clusterCode" />
         <result column="coverage_area" property="coverageArea" />
         <result column="train_count" property="trainCount" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, coverage_area, train_count
+        id, cluster_code, coverage_area, train_count
     </sql>
+
+    <select id="countClusters" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM cluster_info
+    </select>
 
     <select id="selectById" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List" />
         FROM cluster_info
         WHERE id = #{id}
+    </select>
+
+    <select id="selectAllClusters" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM cluster_info
     </select>
 </mapper>

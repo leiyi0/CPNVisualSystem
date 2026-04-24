@@ -23,6 +23,9 @@ public class MyBatisConfig {
         Resource[] resources = resolver.getResources("classpath:mapper/*.xml");
         factoryBean.setMapperLocations(resources);
         factoryBean.setTypeAliasesPackage("org.cpnvisualsystem.entity");
+        org.apache.ibatis.session.Configuration mybatisConfig = new org.apache.ibatis.session.Configuration();
+        mybatisConfig.setMapUnderscoreToCamelCase(true);
+        factoryBean.setConfiguration(mybatisConfig);
         return factoryBean.getObject();
     }
 

@@ -38,4 +38,9 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
     public List<TrainInfo> getTrainsByClusterId(Integer clusterId) {
         return trainInfoMapper.selectTrainsByClusterId(clusterId);
     }
+
+    @Override
+    public List<ClusterInfo> getAllClusters() {
+        return clusterInfoMapper.selectAllClusters();
+    }
 }
