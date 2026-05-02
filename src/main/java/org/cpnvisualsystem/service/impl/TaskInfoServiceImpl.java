@@ -1,7 +1,12 @@
 package org.cpnvisualsystem.service.impl;
 
+import org.cpnvisualsystem.entity.DynamicPowerInfo;
+import org.cpnvisualsystem.entity.NodeMetricsInfo;
+import org.cpnvisualsystem.entity.TaskExecuteLog;
 import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.TaskDetailVO;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
+import org.cpnvisualsystem.mapper.DynamicPowerMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.service.TaskInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,9 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 
     @Autowired
     private TaskInfoMapper taskInfoMapper;
+
+    @Autowired
+    private DynamicPowerMapper dynamicPowerMapper;
 
     @Override
     public List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName) {
@@ -59,5 +67,37 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     @Override
     public Integer countTasksByFilter(String state, String taskName) {
         return taskInfoMapper.countTasksByFilter(state, taskName);
+    }
+
+    @Override
+    public List<TaskExecuteLog> getLogsByTaskId(Integer taskId) {
+        return taskInfoMapper.selectLogsByTaskId(taskId);
+    }
+
+    @Override
+    public TaskDetailVO getTaskDetailById(Long id) {
+        TaskDetailVO vo = new TaskDetailVO();
+        TaskInfo taskInfo = taskInfoMapper.selectTaskById(id);
+        vo.setTaskInfo(taskInfo);
+        // 源设备
+        if (taskInfo != null && taskInfo.getSourceDevice() != null) {
+            NodeMetricsInfo sourceInfo = dynamicPowerMapper.getLatestNodeMetricsByDeviceId(taskInfo.getSourceDevice());
+            vo.setSourceDeviceInfo(sourceInfo);
+        }
+        // 目标设备
+        if (taskInfo != null && taskInfo.getTargetDeviceIds() != null && !taskInfo.getTargetDeviceIds().trim().isEmpty()) {
+            String[] idArr = taskInfo.getTargetDeviceIds().split(",");
+            List<Integer> deviceIds = new ArrayList<>();
+            for (String s : idArr) {
+                try {
+                    deviceIds.add(Integer.parseInt(s.trim()));
+                } catch (Exception ignore) {}
+            }
+            if (!deviceIds.isEmpty()) {
+                List<NodeMetricsInfo> targetInfos = dynamicPowerMapper.getLatestNodeMetricsByDeviceIds(deviceIds);
+                vo.setTargetDeviceInfoList(targetInfos);
+            }
+        }
+        return vo;
     }
 }

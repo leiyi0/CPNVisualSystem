@@ -4,7 +4,9 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
-
+/**
+ * 任务信息实体类，包含任务的基本属性和相关信息
+ */
 @Data
 public class TaskInfo {
     private Long id; // bigint

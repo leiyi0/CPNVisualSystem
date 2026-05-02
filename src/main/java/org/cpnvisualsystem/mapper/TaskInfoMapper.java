@@ -2,6 +2,7 @@ package org.cpnvisualsystem.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.cpnvisualsystem.entity.TaskExecuteLog;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
 
@@ -42,4 +43,13 @@ public interface TaskInfoMapper {
      */
     Integer countTasksByFilter(@Param("state") String state,
                                @Param("taskName") String taskName);
+    /**
+     * 根据任务ID查询执行日志列表
+     */
+    List<TaskExecuteLog> selectLogsByTaskId(Integer taskId);
+
+    /**
+     * 根据主键ID查询任务详情
+     */
+    TaskInfo selectTaskById(@Param("id") Long id);
 }

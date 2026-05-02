@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cpnvisualsystem.mapper.StaticPowerMapper">
+
+    <select id="getStaticPowerInfo" resultType="org.cpnvisualsystem.entity.StaticPowerInfo">
+        SELECT processor_flops as computerPower,
+               memory_capacity_mb as storagePower,
+               network_bandwidth_mbps as transportPower
+        From measured_compute_power_results where node_id = #{deviceId}
+    </select>
+
+    <select id="getStaticPowerInfoByIds" resultType="org.cpnvisualsystem.entity.StaticPowerInfo">
+        SELECT
+        SUM(processor_flops) AS computerPower,
+        SUM(memory_capacity_mb) AS storagePower,
+        SUM(network_bandwidth_mbps) AS transportPower
+        FROM measured_compute_power_results
+        WHERE node_id IN
+        <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </select>
+</mapper>

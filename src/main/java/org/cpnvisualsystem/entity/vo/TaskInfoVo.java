@@ -5,6 +5,9 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 任务信息概览对象
+ */
 @Data
 public class TaskInfoVo {
     private Long id;

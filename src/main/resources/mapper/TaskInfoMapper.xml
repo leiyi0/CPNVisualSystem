@@ -50,4 +50,16 @@
             </if>
         </where>
     </select>
+
+
+    <select id="selectLogsByTaskId" resultType="org.cpnvisualsystem.entity.TaskExecuteLog">
+        select *
+        from task_execute_log
+        where task_id = #{taskId}
+        order by create_time asc
+    </select>
+
+    <select id="selectTaskById" resultType="org.cpnvisualsystem.entity.TaskInfo">
+        SELECT * FROM task_info WHERE id = #{id}
+    </select>
 </mapper>
