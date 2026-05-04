@@ -22,4 +22,22 @@
     <select id="selectCarriagesByTrainId" resultType="org.cpnvisualsystem.entity.CarriageInfo">
         SELECT * FROM carriage_info WHERE train_id = #{trainId}
     </select>
+
+    <select id="selectCarriageViewByCarriageId" resultMap="CarriageViewResultMap">
+        SELECT
+            c.id as car_no,
+            c.device_count,
+            t.cp_model as device_name
+        FROM carriage_info c
+                 LEFT JOIN compute_power_tag t ON CAST(c.id AS CHAR) = t.carriage
+        WHERE c.id = #{carriageId}
+    </select>
+
+    <resultMap id="CarriageViewResultMap" type="org.cpnvisualsystem.entity.vo.CarriageViewVO">
+        <result column="car_no" property="carNo"/>
+        <result column="device_count" property="deviceCount"/>
+        <collection property="deviceName" ofType="java.lang.String">
+            <result column="device_name"/>
+        </collection>
+    </resultMap>
 </mapper>

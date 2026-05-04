@@ -3,6 +3,7 @@ package org.cpnvisualsystem.service.impl;
 import org.cpnvisualsystem.entity.CarriageInfo;
 import org.cpnvisualsystem.entity.ComputeNodes;
 import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import org.cpnvisualsystem.mapper.CarriageInfoMapper;
 import org.cpnvisualsystem.mapper.ComputeNodesMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
@@ -38,5 +39,10 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
     public List<ComputeNodes> getDevicesByCarriageId(Integer carriageId) {
         // 调用上一步写好的桥接查询 SQL
         return computeNodesMapper.selectDevicesByCarriageId(carriageId);
+    }
+
+    @Override
+    public CarriageViewVO getCarriageView(Integer carriageId) {
+        return carriageInfoMapper.selectCarriageViewByCarriageId(carriageId);
     }
 }

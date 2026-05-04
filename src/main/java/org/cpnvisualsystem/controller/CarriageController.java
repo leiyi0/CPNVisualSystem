@@ -7,7 +7,7 @@ import org.cpnvisualsystem.service.DynamicPowerService;
 import org.cpnvisualsystem.service.StaticPowerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import java.util.List;
 
 @RestController
@@ -63,5 +63,11 @@ public class CarriageController {
     public R<?> getDynamicPowerTrendByCarriageId(@PathVariable Integer id, @PathVariable Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByCarriageId(id, minutes);
         return R.ok(dynamicPowerInfo);
+    }
+
+    // 车辆信息页面：车辆算力视图
+    @GetMapping("/view")
+    public R<CarriageViewVO> getCarriageView(@RequestParam("carriage_id") Integer carriageId) {
+        return R.ok(carriageInfoService.getCarriageView(carriageId));
     }
 }

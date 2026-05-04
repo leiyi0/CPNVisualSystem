@@ -7,6 +7,7 @@ import org.cpnvisualsystem.service.StaticPowerService;
 import org.cpnvisualsystem.service.TrainInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.cpnvisualsystem.entity.vo.TrainViewVO;
 
 import java.util.List;
 
@@ -61,6 +62,12 @@ public class TrainController {
     public R<?> getDynamicPowerTrendByTrainId(@PathVariable Integer id, @PathVariable Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByTrainId(id, minutes);
         return R.ok(dynamicPowerInfo);
+    }
+
+    // 列车信息页面：车厢设备分布视图
+    @GetMapping("/view")
+    public R<TrainViewVO> getTrainView(@RequestParam("train_id") Integer trainId) {
+        return R.ok(trainInfoService.getTrainView(trainId));
     }
 
 }
