@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cpnvisualsystem.mapper.DynamicPowerMapper">
+
+    <select id="getDynamicPowerInfoByIp" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT ROUND(memory_usage_percent, 2)                        as storageUsageRate,
+               ROUND((cpu_usage_percent + gpu_usage_percent) / 2, 2) as computeUsageRate,
+               ROUND(bandwidth_out_percent, 2)                       as outputTransportUsageRate,
+               ROUND(bandwidth_in_percent, 2)                        as inputTransportUsageRate
+        FROM node_metrics_history
+        WHERE ip = #{ip}
+        ORDER BY created_at DESC LIMIT 1
+    </select>
+
+    <select id="getDynamicPowerInfoByIps" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT
+        ROUND(AVG((cpu_usage_percent + gpu_usage_percent) / 2), 2) AS computeUsageRate,
+        ROUND(AVG(memory_usage_percent), 2) AS storageUsageRate,
+        ROUND(AVG(bandwidth_out_percent), 2) AS outputTransportUsageRate,
+        ROUND(AVG(bandwidth_in_percent), 2) AS inputTransportUsageRate
+        FROM node_metrics_history
+        WHERE ip IN
+        <foreach collection="ips" item="ip" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+        AND (ip, created_at) IN (
+            SELECT ip, MAX(created_at)
+            FROM node_metrics_history
+            WHERE ip IN
+            <foreach collection="ips" item="ip" open="(" separator="," close=")">
+                #{ip}
+            </foreach>
+            GROUP BY ip
+        )
+    </select>
+
+    <select id="getComputePowerTrend" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT
+        ROUND(AVG((cpu_usage_percent + gpu_usage_percent) / 2), 2) AS computeUsageRate,
+        ROUND(AVG(memory_usage_percent), 2) AS storageUsageRate,
+        ROUND(AVG(bandwidth_out_percent), 2) AS outputTransportUsageRate,
+        ROUND(AVG(bandwidth_in_percent), 2) AS inputTransportUsageRate,
+        -- 👇 时间格式化
+        DATE_FORMAT(
+        DATE_ADD(
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
+        INTERVAL 30 SECOND
+        ),
+        '%H:%i:%s'
+        ) AS createdAt
+        FROM node_metrics_history
+        WHERE
+        ip IN
+        <foreach collection="ips" item="ip" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+        AND created_at >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+        GROUP BY
+        DATE_FORMAT(
+        DATE_ADD(
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
+        INTERVAL 30 SECOND
+        ),
+        '%H:%i:%s'
+        )
+        ORDER BY createdAt ASC
+    </select>
+
+    <select id="getDynamicPowerInfo" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT ROUND(memory_usage_percent, 2)                        as storageUsageRate,
+               ROUND((cpu_usage_percent + gpu_usage_percent) / 2, 2) as computeUsageRate,
+               ROUND(bandwidth_out_percent, 2)                       as outputTransportUsageRate,
+               ROUND(bandwidth_in_percent, 2)                        as inputTransportUsageRate
+        FROM node_metrics_history
+        WHERE node_id = #{deviceId}
+        ORDER BY created_at DESC LIMIT 1
+    </select>
+
+    <select id="getDynamicPowerInfoByIds" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT
+        ROUND(AVG((cpu_usage_percent + gpu_usage_percent) / 2), 2) AS computeUsageRate,
+        ROUND(AVG(memory_usage_percent), 2) AS storageUsageRate,
+        ROUND(AVG(bandwidth_out_percent), 2) AS outputTransportUsageRate,
+        ROUND(AVG(bandwidth_in_percent), 2) AS inputTransportUsageRate
+        FROM node_metrics_history
+        WHERE node_id IN
+        <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+        AND (node_id, created_at) IN (
+            SELECT node_id, MAX(created_at)
+            FROM node_metrics_history
+            WHERE node_id IN
+            <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+                #{deviceId}
+            </foreach>
+            GROUP BY node_id
+        )
+    </select>
+
+    <select id="getComputePowerTrendByIds" resultType="org.cpnvisualsystem.entity.DynamicPowerInfo">
+        SELECT
+        ROUND(AVG((cpu_usage_percent + gpu_usage_percent) / 2), 2) AS computeUsageRate,
+        ROUND(AVG(memory_usage_percent), 2) AS storageUsageRate,
+        ROUND(AVG(bandwidth_out_percent), 2) AS outputTransportUsageRate,
+        ROUND(AVG(bandwidth_in_percent), 2) AS inputTransportUsageRate,
+        DATE_FORMAT(
+        DATE_ADD(
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
+        INTERVAL 30 SECOND
+        ),
+        '%H:%i:%s'
+        ) AS createdAt
+        FROM node_metrics_history
+        WHERE
+        node_id IN
+        <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+        AND created_at >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+        GROUP BY
+        DATE_FORMAT(
+        DATE_ADD(
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
+        INTERVAL 30 SECOND
+        ),
+        '%H:%i:%s'
+        )
+        ORDER BY createdAt ASC
+    </select>
+
+    <select id="getLatestNodeMetricsByDeviceId" resultType="org.cpnvisualsystem.entity.NodeMetricsInfo">
+        SELECT
+            id,
+            node_id as nodeId,
+            cpu_usage_core as cpuUsageCore,
+            cpu_usage_percent as cpuUsagePercent,
+            memory_usage_percent as memoryUsagePercent,
+            memory_used_bytes as memoryUsedBytes,
+            memory_freq_current_mhz as memoryFreqCurrentMhz,
+            gpu_usage_percent as gpuUsagePercent,
+            gpu_mem_used_bytes as gpuMemUsedBytes,
+            bandwidth_in_bps as bandwidthInBps,
+            bandwidth_out_bps as bandwidthOutBps,
+            bandwidth_in_percent as bandwidthInPercent,
+            bandwidth_out_percent as bandwidthOutPercent,
+            net_rtt_avg_ms as netRttAvgMs,
+            net_packet_loss_percent as netPacketLossPercent,
+            created_at as createdAt
+        FROM node_metrics_history
+        WHERE node_id = #{deviceId}
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
+
+    <select id="getLatestNodeMetricsByDeviceIds" resultType="org.cpnvisualsystem.entity.NodeMetricsInfo">
+        SELECT
+            id,
+            node_id as nodeId,
+            cpu_usage_core as cpuUsageCore,
+            cpu_usage_percent as cpuUsagePercent,
+            memory_usage_percent as memoryUsagePercent,
+            memory_used_bytes as memoryUsedBytes,
+            memory_freq_current_mhz as memoryFreqCurrentMhz,
+            gpu_usage_percent as gpuUsagePercent,
+            gpu_mem_used_bytes as gpuMemUsedBytes,
+            bandwidth_in_bps as bandwidthInBps,
+            bandwidth_out_bps as bandwidthOutBps,
+            bandwidth_in_percent as bandwidthInPercent,
+            bandwidth_out_percent as bandwidthOutPercent,
+            net_rtt_avg_ms as netRttAvgMs,
+            net_packet_loss_percent as netPacketLossPercent,
+            created_at as createdAt
+        FROM node_metrics_history
+        WHERE (node_id, created_at) IN (
+            SELECT node_id, MAX(created_at) FROM node_metrics_history
+            WHERE node_id IN
+            <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+                #{deviceId}
+            </foreach>
+            GROUP BY node_id
+        )
+    </select>
+</mapper>
