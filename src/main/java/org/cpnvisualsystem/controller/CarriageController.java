@@ -24,22 +24,26 @@ public class CarriageController {
     private DynamicPowerService dynamicPowerService;
 
     // 1. 获取车厢基本信息
-    @GetMapping("/info")
-    public R<?> getCarriageInfo(@RequestParam("carriage_id") Integer carriageId) {
-        return R.ok(carriageInfoService.getById(carriageId));
+    // 访问路径示例: /api/carriage/info/1
+    @GetMapping("/info/{id}")
+    public R<?> getCarriageInfo(@PathVariable("id") Integer id) {
+        return R.ok(carriageInfoService.getById(id));
     }
 
     // 3. 获取车厢任务预览列表
-    @GetMapping("/tasks")
-    public R<?> getCarriageTasks(@RequestParam("carriage_id") Integer carriageId) {
-        return R.ok(carriageInfoService.getTasksByCarriageId(carriageId));
+    // 访问路径示例: /api/carriage/tasks/1
+    @GetMapping("/tasks/{id}")
+    public R<?> getCarriageTasks(@PathVariable("id") Integer id) {
+        return R.ok(carriageInfoService.getTasksByCarriageId(id));
     }
 
     // 4. 获取设备预览列表
-    @GetMapping("/devices")
-    public R<?> getCarriageDevices(@RequestParam("carriage_id") Integer carriageId) {
-        return R.ok(carriageInfoService.getDevicesByCarriageId(carriageId));
+    // 访问路径示例: /api/carriage/devices/1
+    @GetMapping("/devices/{id}")
+    public R<?> getCarriageDevices(@PathVariable("id") Integer id) {
+        return R.ok(carriageInfoService.getDevicesByCarriageId(id));
     }
+
     // 5. 获取车厢静态算力信息
     @GetMapping("/staticpower/{id}")
     public R<?> getCarriageStaticPower(@PathVariable("id") Integer id) {
@@ -48,26 +52,29 @@ public class CarriageController {
 
     // 6. 获取车厢动态算力信息
     @GetMapping("/dynamicpower/{id}")
-    public R<?> getDynamicPowerByCarriageId(@PathVariable Integer id) {
+    public R<?> getDynamicPowerByCarriageId(@PathVariable("id") Integer id) {
         DynamicPowerInfo dynamicPowerInfo = dynamicPowerService.getDynamicPowerByCarriageId(id);
         return R.ok(dynamicPowerInfo);
     }
 
     /**
      * 获取车厢动态算力趋势信息
-     * @param id
-     * @param minutes
+     * @param id 车厢ID
+     * @param minutes 分钟数
      * @return
      */
     @GetMapping("/dynamicpower/trend/{id}/{minutes}")
-    public R<?> getDynamicPowerTrendByCarriageId(@PathVariable Integer id, @PathVariable Integer minutes) {
+    public R<?> getDynamicPowerTrendByCarriageId(
+            @PathVariable("id") Integer id,
+            @PathVariable("minutes") Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByCarriageId(id, minutes);
         return R.ok(dynamicPowerInfo);
     }
 
-    // 车辆信息页面：车辆算力视图
-    @GetMapping("/view")
-    public R<CarriageViewVO> getCarriageView(@RequestParam("carriage_id") Integer carriageId) {
-        return R.ok(carriageInfoService.getCarriageView(carriageId));
+    // 车厢信息页面：车厢设备算力视图
+    // 访问路径示例: /api/carriage/view/1
+    @GetMapping("/view/{id}")
+    public R<CarriageViewVO> getCarriageView(@PathVariable("id") Integer id) {
+        return R.ok(carriageInfoService.getCarriageView(id));
     }
 }

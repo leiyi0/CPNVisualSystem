@@ -20,10 +20,12 @@ public class ClusterController {
     private StaticPowerService staticPowerService;
     @Autowired
     private DynamicPowerService dynamicPowerService;
+
     // 1. 获取集群基本信息
-    @GetMapping("/info")
-    public R<?> getClusterInfo(@RequestParam("cluster_id") Integer clusterId) {
-        return R.ok(clusterInfoService.getClusterById(clusterId));
+    // 修改后访问路径示例: /api/cluster/info/1
+    @GetMapping("/info/{id}")
+    public R<?> getClusterInfo(@PathVariable("id") Integer id) {
+        return R.ok(clusterInfoService.getClusterById(id));
     }
 
     // 2. 获取集群预览列表
@@ -33,15 +35,17 @@ public class ClusterController {
     }
 
     // 3. 获取集群任务预览列表
-    @GetMapping("/tasks")
-    public R<?> getClusterTasks(@RequestParam("cluster_id") Integer clusterId) {
-        return R.ok(clusterInfoService.getTasksByClusterId(clusterId));
+    // 修改后访问路径示例: /api/cluster/tasks/1
+    @GetMapping("/tasks/{id}")
+    public R<?> getClusterTasks(@PathVariable("id") Integer id) {
+        return R.ok(clusterInfoService.getTasksByClusterId(id));
     }
 
     // 4. 获取列车预览列表
-    @GetMapping("/trains")
-    public R<?> getClusterTrains(@RequestParam("cluster_id") Integer clusterId) {
-        return R.ok(clusterInfoService.getTrainsByClusterId(clusterId));
+    // 修改后访问路径示例: /api/cluster/trains/1
+    @GetMapping("/trains/{id}")
+    public R<?> getClusterTrains(@PathVariable("id") Integer id) {
+        return R.ok(clusterInfoService.getTrainsByClusterId(id));
     }
 
     // 5. 获取集群静态算力信息
@@ -52,19 +56,21 @@ public class ClusterController {
 
     // 6. 获取集群动态算力信息
     @GetMapping("/dynamicpower/{id}")
-    public R<DynamicPowerInfo> getDynamicPowerByClusterId(@PathVariable Integer id) {
+    public R<DynamicPowerInfo> getDynamicPowerByClusterId(@PathVariable("id") Integer id) {
         DynamicPowerInfo dynamicPowerInfo = dynamicPowerService.getDynamicPowerByClusterId(id);
         return R.ok(dynamicPowerInfo);
     }
 
     /**
      * 获取集群动态算力趋势信息
-     * @param id
-     * @param minutes
+     * @param id 集群ID
+     * @param minutes 分钟数
      * @return
      */
     @GetMapping("/dynamicpower/trend/{id}/{minutes}")
-    public R<?> getDynamicPowerTrendByClusterId(@PathVariable Integer id, @PathVariable Integer minutes) {
+    public R<?> getDynamicPowerTrendByClusterId(
+            @PathVariable("id") Integer id,
+            @PathVariable("minutes") Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByClusterId(id, minutes);
         return R.ok(dynamicPowerInfo);
     }

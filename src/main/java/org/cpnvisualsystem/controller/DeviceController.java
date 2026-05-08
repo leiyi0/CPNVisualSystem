@@ -21,37 +21,45 @@ public class DeviceController {
     @Autowired
     private DynamicPowerService dynamicPowerService;
 
-    // 1. 获取设备预览信息
-    @GetMapping("/list")
-    public R<?> getDeviceList(@RequestParam("carriage_id") Integer carriageId) {
-        return R.ok(deviceService.getDevicesByCarriageId(carriageId));
+    // 1. 获取设备预览信息 (根据车厢ID获取设备列表)
+    // 访问路径示例: /api/device/list/1
+    @GetMapping("/list/{id}")
+    public R<?> getDeviceList(@PathVariable("id") Integer id) {
+        return R.ok(deviceService.getDevicesByCarriageId(id));
     }
 
-    // 2. 获取设备详细信息
-    @GetMapping("/info")
-    public R<?> getDeviceInfo(@RequestParam("device_id") Integer deviceId) {
-        return R.ok(deviceService.getDeviceById(deviceId));
+    // 2. 获取设备详细信息 (根据设备ID获取详情)
+    // 访问路径示例: /api/device/info/10
+    @GetMapping("/info/{id}")
+    public R<?> getDeviceInfo(@PathVariable("id") Integer id) {
+        return R.ok(deviceService.getDeviceById(id));
     }
 
     // 4. 获取设备相关任务
-    @GetMapping("/tasks")
-    public R<?> getDeviceTasks(@RequestParam("device_id") Integer deviceId) {
-        return R.ok(deviceService.getTasksByDeviceId(deviceId));
+    // 访问路径示例: /api/device/tasks/10
+    @GetMapping("/tasks/{id}")
+    public R<?> getDeviceTasks(@PathVariable("id") Integer id) {
+        return R.ok(deviceService.getTasksByDeviceId(id));
     }
+
     // 5. 获取设备静态算力信息
     @GetMapping("/staticpower/{id}")
     public R<?> getDeviceStaticPower(@PathVariable("id") Integer id) {
         return R.ok(staticPowerService.getStaticPowerByDeviceId(id));
     }
+
     // 6. 获取设备动态算力信息
     @GetMapping("/dynamicpower/{id}")
-    public R<?> getDynamicPower(@PathVariable Integer id) {
+    public R<?> getDynamicPower(@PathVariable("id") Integer id) {
         DynamicPowerInfo dynamicPowerInfo = dynamicPowerService.getDynamicPowerByDeviceId(id);
         return R.ok(dynamicPowerInfo);
     }
+
     // 7. 获取设备动态算力趋势信息
     @GetMapping("/dynamicpower/trend/{id}/{minutes}")
-    public R<?> getDynamicPowerTrendByDeviceId(@PathVariable Integer id, @PathVariable Integer minutes) {
+    public R<?> getDynamicPowerTrendByDeviceId(
+            @PathVariable("id") Integer id,
+            @PathVariable("minutes") Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByDeviceId(id, minutes);
         return R.ok(dynamicPowerInfo);
     }
