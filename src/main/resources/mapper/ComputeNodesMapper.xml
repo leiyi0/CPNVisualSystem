@@ -5,9 +5,12 @@
         SELECT * FROM compute_nodes WHERE id = #{id}
     </select>
 
+    <!-- 根据车厢ID获取设备列表 -->
     <select id="selectDevicesByCarriageId" resultType="org.cpnvisualsystem.entity.ComputeNodes">
-        SELECT n.* FROM compute_nodes n
-                            JOIN compute_power_tag t ON n.ip = t.ip
+        SELECT n.*
+        FROM compute_nodes n
+                 JOIN compute_power_tag t
+                      ON CAST(n.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.node_id COLLATE utf8mb4_unicode_ci
         WHERE t.carriage = #{carriageId}
     </select>
 </mapper>

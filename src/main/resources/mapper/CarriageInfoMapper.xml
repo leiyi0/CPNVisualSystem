@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cpnvisualsystem.mapper.CarriageInfoMapper">
+
     <resultMap id="BaseResultMap" type="org.cpnvisualsystem.entity.CarriageInfo">
         <id column="id" property="id" />
         <result column="cluster_id" property="clusterId" />
         <result column="train_id" property="trainId" />
         <result column="position" property="position" />
         <result column="device_count" property="deviceCount" />
+    </resultMap>
+
+    <!-- 用于映射车厢视图及其搭载的设备列表 -->
+    <resultMap id="CarriageViewResultMap" type="org.cpnvisualsystem.entity.vo.CarriageViewVO">
+        <result column="car_no" property="carNo"/>
+        <result column="device_count" property="deviceCount"/>
+        <collection property="deviceName" ofType="java.lang.String">
+            <result column="device_name"/>
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -23,21 +33,27 @@
         SELECT * FROM carriage_info WHERE train_id = #{trainId}
     </select>
 
+    <!-- 已有的：根据车厢ID获取车厢视图 (加上 COLLATE 解决字符集冲突) -->
     <select id="selectCarriageViewByCarriageId" resultMap="CarriageViewResultMap">
         SELECT
             c.id as car_no,
             c.device_count,
             t.cp_model as device_name
         FROM carriage_info c
-                 LEFT JOIN compute_power_tag t ON CAST(c.id AS CHAR) = t.carriage
+                 LEFT JOIN compute_power_tag t
+                           ON CAST(c.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.carriage COLLATE utf8mb4_unicode_ci
         WHERE c.id = #{carriageId}
     </select>
 
-    <resultMap id="CarriageViewResultMap" type="org.cpnvisualsystem.entity.vo.CarriageViewVO">
-        <result column="car_no" property="carNo"/>
-        <result column="device_count" property="deviceCount"/>
-        <collection property="deviceName" ofType="java.lang.String">
-            <result column="device_name"/>
-        </collection>
-    </resultMap>
+    <!-- 新增的：根据列车ID获取该列车下所有车厢的视图数据 (加上 COLLATE 解决字符集冲突) -->
+    <select id="selectCarriageViewByTrainId" resultMap="CarriageViewResultMap">
+        SELECT
+            c.id as car_no,
+            c.device_count,
+            t.cp_model as device_name
+        FROM carriage_info c
+                 LEFT JOIN compute_power_tag t
+                           ON CAST(c.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.carriage COLLATE utf8mb4_unicode_ci
+        WHERE c.train_id = #{trainId}
+    </select>
 </mapper>
