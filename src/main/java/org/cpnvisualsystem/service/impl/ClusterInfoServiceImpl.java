@@ -3,6 +3,9 @@ package org.cpnvisualsystem.service.impl;
 import org.cpnvisualsystem.entity.ClusterInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
+import org.cpnvisualsystem.entity.vo.ClusterMapVO;
+import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
+import org.cpnvisualsystem.entity.vo.TrainPreviewVO;
 import org.cpnvisualsystem.mapper.ClusterInfoMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClusterInfoServiceImpl implements ClusterInfoService {
@@ -30,17 +34,32 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
     }
 
     @Override
-    public List<TaskInfo> getTasksByClusterId(Integer clusterId) {
-        return taskInfoMapper.selectTasksByClusterId(clusterId);
+    public List<TaskPreviewVO> getTasksByClusterId(Integer clusterId) {
+        List<TaskInfo> tasks = taskInfoMapper.selectTasksByClusterId(clusterId);
+        return tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
     }
 
     @Override
-    public List<TrainInfo> getTrainsByClusterId(Integer clusterId) {
-        return trainInfoMapper.selectTrainsByClusterId(clusterId);
+    public List<TrainPreviewVO> getTrainsByClusterId(Integer clusterId) {
+        List<TrainInfo> trains = trainInfoMapper.selectTrainsByClusterId(clusterId);
+        return trains.stream().map(TransformUtil::toTrainPreview).collect(Collectors.toList());
     }
 
     @Override
     public List<ClusterInfo> getAllClusters() {
         return clusterInfoMapper.selectAllClusters();
+    }
+
+    @Override
+    public List<ClusterMapVO> getClusterMap() {
+        List<ClusterInfo> clusters = clusterInfoMapper.selectAllClusters();
+        return clusters.stream().map(c -> {
+            ClusterMapVO vo = new ClusterMapVO();
+            vo.setClusterId(c.getClusterCode());
+            vo.setLeft(c.getMapLeft());
+            vo.setTop(c.getMapTop());
+            vo.setStatus(c.getStatus() != null ? c.getStatus() : "正常");
+            return vo;
+        }).collect(Collectors.toList());
     }
 }

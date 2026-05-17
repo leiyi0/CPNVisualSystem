@@ -1,16 +1,16 @@
 package org.cpnvisualsystem.service;
 
-import org.cpnvisualsystem.entity.CarriageInfo;
-import org.cpnvisualsystem.entity.ComputeNodes;
-import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.CarriageInfoVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
+import org.cpnvisualsystem.entity.vo.DevicePreviewVO;
+import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
 
 import java.util.List;
 
 public interface CarriageInfoService {
-    CarriageInfo getById(Integer id);
-    List<TaskInfo> getTasksByCarriageId(Integer carriageId);
-    List<ComputeNodes> getDevicesByCarriageId(Integer carriageId);
+    CarriageInfoVO getById(Integer id);
+    List<TaskPreviewVO> getTasksByCarriageId(Integer carriageId);
+    List<DevicePreviewVO> getDevicesByCarriageId(Integer carriageId);
 
     CarriageViewVO getCarriageView(Integer carriageId);
 }

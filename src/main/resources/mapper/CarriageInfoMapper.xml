@@ -6,8 +6,11 @@
         <id column="id" property="id" />
         <result column="cluster_id" property="clusterId" />
         <result column="train_id" property="trainId" />
+        <result column="carriage_code" property="carriageCode" />
+        <result column="type" property="type" />
         <result column="position" property="position" />
         <result column="device_count" property="deviceCount" />
+        <result column="status" property="status" />
     </resultMap>
 
     <!-- 用于映射车厢视图及其搭载的设备列表 -->
@@ -20,7 +23,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, cluster_id, train_id, position, device_count
+        id, cluster_id, train_id, carriage_code, type, position, device_count, status
     </sql>
 
     <select id="selectById" resultMap="BaseResultMap">

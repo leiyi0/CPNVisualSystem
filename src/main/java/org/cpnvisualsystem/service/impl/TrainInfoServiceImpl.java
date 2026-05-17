@@ -3,7 +3,10 @@ package org.cpnvisualsystem.service.impl;
 import org.cpnvisualsystem.entity.CarriageInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
+import org.cpnvisualsystem.entity.vo.CarriagePreviewVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
+import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
+import org.cpnvisualsystem.entity.vo.TrainInfoVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 import org.cpnvisualsystem.mapper.CarriageInfoMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainInfoServiceImpl implements TrainInfoService {
@@ -27,18 +31,22 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     private CarriageInfoMapper carriageInfoMapper;
 
     @Override
-    public TrainInfo getTrainById(Integer trainId) {
-        return trainInfoMapper.selectById(trainId);
+    public TrainInfoVO getTrainById(Integer trainId) {
+        TrainInfo train = trainInfoMapper.selectById(trainId);
+        if (train == null) return null;
+        return TransformUtil.toTrainInfo(train);
     }
 
     @Override
-    public List<TaskInfo> getTasksByTrainId(Integer trainId) {
-        return taskInfoMapper.selectTasksByTrainId(trainId);
+    public List<TaskPreviewVO> getTasksByTrainId(Integer trainId) {
+        List<TaskInfo> tasks = taskInfoMapper.selectTasksByTrainId(trainId);
+        return tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
     }
 
     @Override
-    public List<CarriageInfo> getCarriagesByTrainId(Integer trainId) {
-        return carriageInfoMapper.selectCarriagesByTrainId(trainId);
+    public List<CarriagePreviewVO> getCarriagesByTrainId(Integer trainId) {
+        List<CarriageInfo> carriages = carriageInfoMapper.selectCarriagesByTrainId(trainId);
+        return carriages.stream().map(TransformUtil::toCarriagePreview).collect(Collectors.toList());
     }
 
     @Override
@@ -50,7 +58,6 @@ public class TrainInfoServiceImpl implements TrainInfoService {
         view.setTrainId(String.valueOf(train.getTrainNumber()));
         view.setCarCount(train.getCarriageCount());
 
-        // 获取该列车下所有车厢的视图数据
         List<CarriageViewVO> carriages = carriageInfoMapper.selectCarriageViewByTrainId(trainId);
         view.setCarriages(carriages);
 

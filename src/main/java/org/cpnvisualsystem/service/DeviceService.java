@@ -1,12 +1,12 @@
 package org.cpnvisualsystem.service;
 
 import org.cpnvisualsystem.entity.ComputeNodes;
-import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.DevicePreviewVO;
 
 import java.util.List;
 
 public interface DeviceService {
-    List<ComputeNodes> getDevicesByCarriageId(Integer carriageId);
+    List<DevicePreviewVO> getDevicesByCarriageId(Integer carriageId);
     ComputeNodes getDeviceById(Integer deviceId);
-    List<TaskInfo> getTasksByDeviceId(Integer deviceId);
+    List<org.cpnvisualsystem.entity.vo.TaskPreviewVO> getTasksByDeviceId(Integer deviceId);
 }
