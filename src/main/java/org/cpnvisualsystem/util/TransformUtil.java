@@ -1,11 +1,7 @@
-package org.cpnvisualsystem.service.impl;
+package org.cpnvisualsystem.util;
 
 import org.cpnvisualsystem.entity.*;
 import org.cpnvisualsystem.entity.vo.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TransformUtil {
 

@@ -45,12 +45,11 @@ public class TotalController {
 
     /**
      * 获取总览动态算力趋势信息
-     * @param id
      * @param minutes
      * @return
      */
     @GetMapping("/dynamicpower/trend/{minutes}")
-    public R<?> getTotalDynamicPowerTrend(@PathVariable Integer id, @PathVariable Integer minutes) {
+    public R<?> getTotalDynamicPowerTrend(@PathVariable Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getTotalDynamicPowerTrend(minutes);
         return R.ok(dynamicPowerInfo);
     }
