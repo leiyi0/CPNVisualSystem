@@ -21,4 +21,9 @@ public interface CarriageInfoMapper {
 
     List<CarriageViewVO> selectCarriageViewByTrainId(@Param("trainId") Integer trainId);
     CarriageViewVO selectCarriageViewByCarriageId(@Param("carriageId") Integer carriageId);
+
+    /**
+     * 根据列车ID统计车厢数量
+     */
+    Integer countCarriagesByTrainId(@Param("trainId") Integer trainId);
 }

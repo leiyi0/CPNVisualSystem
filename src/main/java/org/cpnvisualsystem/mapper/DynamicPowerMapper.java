@@ -37,7 +37,7 @@ public interface DynamicPowerMapper {
      */
     DynamicPowerInfo getDynamicPowerInfoByIds(@Param("deviceIds") List<Integer> deviceIds);
 
-    List<DynamicPowerInfo> getComputePowerTrendByIds(@Param("deviceIds") List<Integer> deviceIds, @Param("minutes") Integer minutes);
+    List<DynamicPowerInfo> getComputePowerTrendByIds(@Param("deviceIds") List<Integer> deviceIds, @Param("minutes") Integer minutes, @Param("bucketSeconds") Integer bucketSeconds);
 
     /**
      * 查询单个设备的最新节点指标信息

@@ -31,7 +31,11 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
 
     @Override
     public ClusterInfo getClusterById(Integer clusterId) {
-        return clusterInfoMapper.selectById(clusterId);
+        ClusterInfo cluster = clusterInfoMapper.selectById(clusterId);
+        if (cluster != null) {
+            cluster.setTrainCount(trainInfoMapper.countTrainsByClusterId(clusterId));
+        }
+        return cluster;
     }
 
     @Override
@@ -48,7 +52,11 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
 
     @Override
     public List<ClusterInfo> getAllClusters() {
-        return clusterInfoMapper.selectAllClusters();
+        List<ClusterInfo> clusters = clusterInfoMapper.selectAllClusters();
+        for (ClusterInfo cluster : clusters) {
+            cluster.setTrainCount(trainInfoMapper.countTrainsByClusterId(cluster.getId()));
+        }
+        return clusters;
     }
 
     @Override

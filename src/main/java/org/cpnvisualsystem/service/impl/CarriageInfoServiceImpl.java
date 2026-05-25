@@ -34,6 +34,7 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
     public CarriageInfoVO getById(Integer id) {
         CarriageInfo carriage = carriageInfoMapper.selectById(id);
         if (carriage == null) return null;
+        carriage.setDeviceCount(computeNodesMapper.countDevicesByCarriageId(id));
         return TransformUtil.toCarriageInfo(carriage);
     }
 

@@ -17,4 +17,9 @@ public interface ComputeNodesMapper {
      * 根据车厢ID查询搭载的设备列表 (桥接 compute_power_tag 表查询)
      */
     List<ComputeNodes> selectDevicesByCarriageId(@Param("carriageId") Integer carriageId);
+
+    /**
+     * 根据车厢ID统计设备数量
+     */
+    Integer countDevicesByCarriageId(@Param("carriageId") Integer carriageId);
 }

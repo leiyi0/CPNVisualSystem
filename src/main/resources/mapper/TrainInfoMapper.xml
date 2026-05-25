@@ -19,4 +19,10 @@
         WHERE cluster_id = #{clusterId}
     </select>
 
+    <select id="countTrainsByClusterId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM train_info
+        WHERE cluster_id = #{clusterId}
+    </select>
+
 </mapper>

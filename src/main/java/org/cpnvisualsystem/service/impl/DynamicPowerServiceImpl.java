@@ -64,11 +64,19 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
         return dynamicPowerMapper.getDynamicPowerInfoByIds(deviceIds);
     }
 
+    /**
+     * 自适应桶大小：数据点多于 30 个时自动降采样，保证图表加载流畅
+     */
+    private int calcBucketSeconds(int minutes) {
+        int bucket = (int) Math.ceil(minutes * 60.0 / 30);
+        return Math.max(30, bucket);
+    }
+
     @Override
     public List<DynamicPowerInfo> getDynamicPowerTrendByDeviceId(Integer deviceId, Integer minutes) {
         List<Integer> deviceIds = new ArrayList<>();
         deviceIds.add(deviceId);
-        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes);
+        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes, calcBucketSeconds(minutes));
     }
 
     @Override
@@ -77,7 +85,7 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
         if (deviceIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes);
+        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes, calcBucketSeconds(minutes));
     }
 
     @Override
@@ -86,7 +94,7 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
         if (deviceIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes);
+        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes, calcBucketSeconds(minutes));
     }
 
     @Override
@@ -95,7 +103,7 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
         if (deviceIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes);
+        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes, calcBucketSeconds(minutes));
     }
 
     @Override
@@ -104,6 +112,6 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
         if (deviceIds.isEmpty()) {
             return new ArrayList<>();
         }
-        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes);
+        return dynamicPowerMapper.getComputePowerTrendByIds(deviceIds, minutes, calcBucketSeconds(minutes));
     }
 }

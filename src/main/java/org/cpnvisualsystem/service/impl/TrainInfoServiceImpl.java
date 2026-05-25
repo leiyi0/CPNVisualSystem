@@ -9,6 +9,7 @@ import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
 import org.cpnvisualsystem.entity.vo.TrainInfoVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 import org.cpnvisualsystem.mapper.CarriageInfoMapper;
+import org.cpnvisualsystem.mapper.ComputeNodesMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
 import org.cpnvisualsystem.service.TrainInfoService;
@@ -31,10 +32,14 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     @Autowired
     private CarriageInfoMapper carriageInfoMapper;
 
+    @Autowired
+    private ComputeNodesMapper computeNodesMapper;
+
     @Override
     public TrainInfoVO getTrainById(Integer trainId) {
         TrainInfo train = trainInfoMapper.selectById(trainId);
         if (train == null) return null;
+        train.setCarriageCount(carriageInfoMapper.countCarriagesByTrainId(trainId));
         return TransformUtil.toTrainInfo(train);
     }
 
@@ -47,6 +52,9 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     @Override
     public List<CarriagePreviewVO> getCarriagesByTrainId(Integer trainId) {
         List<CarriageInfo> carriages = carriageInfoMapper.selectCarriagesByTrainId(trainId);
+        for (CarriageInfo carriage : carriages) {
+            carriage.setDeviceCount(computeNodesMapper.countDevicesByCarriageId(carriage.getId()));
+        }
         return carriages.stream().map(TransformUtil::toCarriagePreview).collect(Collectors.toList());
     }
 
@@ -57,7 +65,7 @@ public class TrainInfoServiceImpl implements TrainInfoService {
 
         TrainViewVO view = new TrainViewVO();
         view.setTrainId(String.valueOf(train.getTrainNumber()));
-        view.setCarCount(train.getCarriageCount());
+        view.setCarCount(carriageInfoMapper.countCarriagesByTrainId(trainId));
 
         List<CarriageViewVO> carriages = carriageInfoMapper.selectCarriageViewByTrainId(trainId);
         view.setCarriages(carriages);

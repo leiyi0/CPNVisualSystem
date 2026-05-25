@@ -106,8 +106,8 @@
         ROUND(AVG(bandwidth_in_percent), 2) AS inputTransportUsageRate,
         DATE_FORMAT(
         DATE_ADD(
-        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
-        INTERVAL 30 SECOND
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % ${bucketSeconds} SECOND),
+        INTERVAL ${bucketSeconds} SECOND
         ),
         '%H:%i:%s'
         ) AS createdAt
@@ -121,8 +121,8 @@
         GROUP BY
         DATE_FORMAT(
         DATE_ADD(
-        DATE_SUB(created_at, INTERVAL SECOND(created_at) % 30 SECOND),
-        INTERVAL 30 SECOND
+        DATE_SUB(created_at, INTERVAL SECOND(created_at) % ${bucketSeconds} SECOND),
+        INTERVAL ${bucketSeconds} SECOND
         ),
         '%H:%i:%s'
         )

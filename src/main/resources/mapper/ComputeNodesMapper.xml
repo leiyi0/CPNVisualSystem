@@ -13,4 +13,12 @@
                       ON CAST(n.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.node_id COLLATE utf8mb4_unicode_ci
         WHERE t.carriage = #{carriageId}
     </select>
+
+    <select id="countDevicesByCarriageId" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT n.id)
+        FROM compute_nodes n
+                 JOIN compute_power_tag t
+                      ON CAST(n.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.node_id COLLATE utf8mb4_unicode_ci
+        WHERE t.carriage = #{carriageId}
+    </select>
 </mapper>

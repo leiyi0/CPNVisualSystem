@@ -40,7 +40,7 @@
     <select id="selectCarriageViewByCarriageId" resultMap="CarriageViewResultMap">
         SELECT
             c.id as car_no,
-            c.device_count,
+            (SELECT COUNT(*) FROM compute_power_tag WHERE carriage = CAST(c.id AS CHAR)) as device_count,
             t.cp_model as device_name
         FROM carriage_info c
                  LEFT JOIN compute_power_tag t
@@ -48,11 +48,17 @@
         WHERE c.id = #{carriageId}
     </select>
 
+    <select id="countCarriagesByTrainId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM carriage_info
+        WHERE train_id = #{trainId}
+    </select>
+
     <!-- 新增的：根据列车ID获取该列车下所有车厢的视图数据 (加上 COLLATE 解决字符集冲突) -->
     <select id="selectCarriageViewByTrainId" resultMap="CarriageViewResultMap">
         SELECT
             c.id as car_no,
-            c.device_count,
+            (SELECT COUNT(*) FROM compute_power_tag WHERE carriage = CAST(c.id AS CHAR)) as device_count,
             t.cp_model as device_name
         FROM carriage_info c
                  LEFT JOIN compute_power_tag t

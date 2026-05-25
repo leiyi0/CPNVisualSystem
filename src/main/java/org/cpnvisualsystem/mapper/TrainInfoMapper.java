@@ -21,4 +21,9 @@ public interface TrainInfoMapper {
      * 根据集群ID查询下属所有列车列表
      */
     List<TrainInfo> selectTrainsByClusterId(@Param("clusterId") Integer clusterId);
+
+    /**
+     * 根据集群ID统计列车数量
+     */
+    Integer countTrainsByClusterId(@Param("clusterId") Integer clusterId);
 }
