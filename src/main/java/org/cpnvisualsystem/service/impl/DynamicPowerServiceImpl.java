@@ -65,7 +65,7 @@ public class DynamicPowerServiceImpl implements DynamicPowerService {
     }
 
     private int calcBucketSeconds(int minutes) {
-        int bucket = (int) Math.ceil(minutes * 60.0 / 12);
+        int bucket = (int) Math.ceil(minutes * 60.0 / 20);
         return Math.max(30, bucket);
     }
 

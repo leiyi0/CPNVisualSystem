@@ -7,18 +7,18 @@
 
     <!-- 根据车厢ID获取设备列表 -->
     <select id="selectDevicesByCarriageId" resultType="org.cpnvisualsystem.entity.ComputeNodes">
-        SELECT DISTINCT n.*
-        FROM compute_nodes n
-                 JOIN compute_power_tag t
-                      ON CAST(n.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.node_id COLLATE utf8mb4_unicode_ci
-        WHERE t.carriage = #{carriageId}
+        SELECT * FROM compute_nodes WHERE carriage_id = #{carriageId}
     </select>
 
     <select id="countDevicesByCarriageId" resultType="java.lang.Integer">
-        SELECT COUNT(DISTINCT n.id)
-        FROM compute_nodes n
-                 JOIN compute_power_tag t
-                      ON CAST(n.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.node_id COLLATE utf8mb4_unicode_ci
-        WHERE t.carriage = #{carriageId}
+        SELECT COUNT(*) FROM compute_nodes WHERE carriage_id = #{carriageId}
+    </select>
+
+    <select id="countAllDevices" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM compute_nodes
+    </select>
+
+    <select id="countOnlineDevices" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM compute_nodes WHERE status = 'READY'
     </select>
 </mapper>

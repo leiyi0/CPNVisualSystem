@@ -17,6 +17,7 @@ public class ComputeNodes {
     private Double cpuBaseFreq;
     private String memoryTotalBytes;
     private String storageTotalBytes;
+    private Integer carriageId;
     private Integer hasGpu;
     private String gpuModel;
     private String gpuMemTotalBytes;

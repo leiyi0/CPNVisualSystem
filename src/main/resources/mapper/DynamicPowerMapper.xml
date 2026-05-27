@@ -109,7 +109,7 @@
         DATE_SUB(created_at, INTERVAL SECOND(created_at) % ${bucketSeconds} SECOND),
         INTERVAL ${bucketSeconds} SECOND
         ),
-        '%H:%i:%s'
+        '%Y-%m-%d %H:%i:%s'
         ) AS createdAt
         FROM node_metrics_history
         WHERE
@@ -117,14 +117,21 @@
         <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
-        AND created_at >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+        AND created_at >= (
+            SELECT DATE_SUB(COALESCE(MAX(created_at), NOW()), INTERVAL #{minutes} MINUTE)
+            FROM node_metrics_history
+            WHERE node_id IN
+            <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+                #{deviceId}
+            </foreach>
+        )
         GROUP BY
         DATE_FORMAT(
         DATE_ADD(
         DATE_SUB(created_at, INTERVAL SECOND(created_at) % ${bucketSeconds} SECOND),
         INTERVAL ${bucketSeconds} SECOND
         ),
-        '%H:%i:%s'
+        '%Y-%m-%d %H:%i:%s'
         )
         ORDER BY createdAt ASC
     </select>

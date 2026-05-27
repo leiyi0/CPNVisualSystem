@@ -14,7 +14,7 @@ public interface ComputeNodesMapper {
     ComputeNodes selectById(@Param("id") Integer id);
 
     /**
-     * 根据车厢ID查询搭载的设备列表 (桥接 compute_power_tag 表查询)
+     * 根据车厢ID查询搭载的设备列表
      */
     List<ComputeNodes> selectDevicesByCarriageId(@Param("carriageId") Integer carriageId);
 
@@ -22,4 +22,14 @@ public interface ComputeNodesMapper {
      * 根据车厢ID统计设备数量
      */
     Integer countDevicesByCarriageId(@Param("carriageId") Integer carriageId);
+
+    /**
+     * 统计所有设备总数
+     */
+    Integer countAllDevices();
+
+    /**
+     * 统计在线设备数 (status = 'READY')
+     */
+    Integer countOnlineDevices();
 }

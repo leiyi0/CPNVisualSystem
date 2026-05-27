@@ -36,15 +36,14 @@
         SELECT * FROM carriage_info WHERE train_id = #{trainId}
     </select>
 
-    <!-- 已有的：根据车厢ID获取车厢视图 (加上 COLLATE 解决字符集冲突) -->
+    <!-- 已有的：根据车厢ID获取车厢视图 -->
     <select id="selectCarriageViewByCarriageId" resultMap="CarriageViewResultMap">
         SELECT
             c.id as car_no,
-            (SELECT COUNT(*) FROM compute_power_tag WHERE carriage = CAST(c.id AS CHAR)) as device_count,
-            t.cp_model as device_name
+            (SELECT COUNT(*) FROM compute_nodes WHERE carriage_id = c.id) as device_count,
+            n.cpu_model as device_name
         FROM carriage_info c
-                 LEFT JOIN compute_power_tag t
-                           ON CAST(c.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.carriage COLLATE utf8mb4_unicode_ci
+                 LEFT JOIN compute_nodes n ON n.carriage_id = c.id
         WHERE c.id = #{carriageId}
     </select>
 
@@ -54,15 +53,14 @@
         WHERE train_id = #{trainId}
     </select>
 
-    <!-- 新增的：根据列车ID获取该列车下所有车厢的视图数据 (加上 COLLATE 解决字符集冲突) -->
+    <!-- 新增的：根据列车ID获取该列车下所有车厢的视图数据 -->
     <select id="selectCarriageViewByTrainId" resultMap="CarriageViewResultMap">
         SELECT
             c.id as car_no,
-            (SELECT COUNT(*) FROM compute_power_tag WHERE carriage = CAST(c.id AS CHAR)) as device_count,
-            t.cp_model as device_name
+            (SELECT COUNT(*) FROM compute_nodes WHERE carriage_id = c.id) as device_count,
+            n.cpu_model as device_name
         FROM carriage_info c
-                 LEFT JOIN compute_power_tag t
-                           ON CAST(c.id AS CHAR) COLLATE utf8mb4_unicode_ci = t.carriage COLLATE utf8mb4_unicode_ci
+                 LEFT JOIN compute_nodes n ON n.carriage_id = c.id
         WHERE c.train_id = #{trainId}
     </select>
 </mapper>
