@@ -59,29 +59,14 @@ public class TransformUtil {
 
     public static DevicePreviewVO toDevicePreview(ComputeNodes n) {
         DevicePreviewVO vo = new DevicePreviewVO();
-        String type = resolveDeviceType(n);
+        boolean gpu = n.getHasGpu() != null && n.getHasGpu() == 1;
+        String type = gpu ? "GPU" : "CPU";
         vo.setDeviceId(String.valueOf(n.getId()));
-        vo.setDeviceName(type + String.format("%03d", n.getId()));
+        vo.setDeviceName(n.getName() != null ? n.getName() : (type + String.format("%03d", n.getId())));
         vo.setType(type);
         vo.setStatus(mapDeviceStatus(n.getStatus()));
         vo.setThumbnail(null);
         return vo;
-    }
-
-    private static String resolveDeviceType(ComputeNodes n) {
-        if (n.getHasGpu() != null && n.getHasGpu() == 1) {
-            return "GPU服务器";
-        }
-        if (n.getCpuArch() != null) {
-            String arch = n.getCpuArch().toLowerCase();
-            if (arch.contains("dsp")) {
-                return "DSP服务器";
-            }
-            if (arch.contains("mcu") || arch.contains("arm") || arch.contains("risc")) {
-                return "MCU服务器";
-            }
-        }
-        return "CPU服务器";
     }
 
     private static double[] parsePosition(String position) {
