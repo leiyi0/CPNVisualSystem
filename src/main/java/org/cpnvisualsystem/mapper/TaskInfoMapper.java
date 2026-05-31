@@ -36,13 +36,15 @@ public interface TaskInfoMapper {
     List<TaskInfo> selectTasksByPage(@Param("offset") Integer offset,
                                        @Param("limit") Integer limit,
                                        @Param("state") String state,
-                                       @Param("taskName") String taskName);
+                                       @Param("taskName") String taskName,
+                                       @Param("deviceId") Integer deviceId);
 
     /**
      * 根据筛选条件统计任务总数
      */
     Integer countTasksByFilter(@Param("state") String state,
-                               @Param("taskName") String taskName);
+                               @Param("taskName") String taskName,
+                               @Param("deviceId") Integer deviceId);
     /**
      * 根据任务ID查询执行日志列表
      */

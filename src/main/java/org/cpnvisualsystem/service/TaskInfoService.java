@@ -8,9 +8,9 @@ import org.cpnvisualsystem.entity.vo.TaskInfoVo;
 import java.util.List;
 
 public interface TaskInfoService {
-    List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName);
+    List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName, Integer deviceId);
 
-    Integer countTasksByFilter(String state, String taskName);
+    Integer countTasksByFilter(String state, String taskName, Integer deviceId);
 
     List<TaskExecuteLog> getLogsByTaskId(Integer taskId);
 

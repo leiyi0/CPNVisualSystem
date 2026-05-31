@@ -59,11 +59,9 @@ public class TransformUtil {
 
     public static DevicePreviewVO toDevicePreview(ComputeNodes n) {
         DevicePreviewVO vo = new DevicePreviewVO();
-        boolean gpu = n.getHasGpu() != null && n.getHasGpu() == 1;
-        String type = gpu ? "GPU" : "CPU";
         vo.setDeviceId(String.valueOf(n.getId()));
-        vo.setDeviceName(n.getName() != null ? n.getName() : (type + String.format("%03d", n.getId())));
-        vo.setType(type);
+        vo.setDeviceName(n.getName());
+        vo.setType(n.getDeviceNameCn());
         vo.setStatus(mapDeviceStatus(n.getStatus()));
         vo.setThumbnail(null);
         return vo;

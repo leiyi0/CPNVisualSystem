@@ -30,9 +30,10 @@ public class TaskController {
     public R<?> listTasks(@RequestParam(value = "pageNum", required = false) Integer pageNum,
                           @RequestParam(value = "pageSize", required = false) Integer pageSize,
                           @RequestParam(value = "state", required = false) String state,
-                          @RequestParam(value = "taskName", required = false) String taskName) {
-        List<TaskInfoVo> data = taskInfoService.getTasksByPage(pageNum, pageSize, state, taskName);
-        Integer total = taskInfoService.countTasksByFilter(state, taskName);
+                          @RequestParam(value = "taskName", required = false) String taskName,
+                          @RequestParam(value = "deviceId", required = false) Integer deviceId) {
+        List<TaskInfoVo> data = taskInfoService.getTasksByPage(pageNum, pageSize, state, taskName, deviceId);
+        Integer total = taskInfoService.countTasksByFilter(state, taskName, deviceId);
         PageResult<TaskInfoVo> pageResult = new PageResult<>(data, total, (pageNum == null ? 1 : pageNum), (pageSize == null ? 10 : pageSize));
         return R.ok(pageResult);
     }

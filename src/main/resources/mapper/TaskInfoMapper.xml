@@ -23,30 +23,36 @@
         WHERE tr.cluster_id = #{clusterId}
     </select>
 
-    <!-- 分页并按状态/名称筛选 -->
+    <!-- 分页并按状态/名称/设备筛选 -->
     <select id="selectTasksByPage" resultType="org.cpnvisualsystem.entity.TaskInfo">
-        SELECT * FROM task_info
+        SELECT t.* FROM task_info t
         <where>
             <if test="state != null and state != ''">
-                state = #{state}
+                t.state = #{state}
             </if>
             <if test="taskName != null and taskName != ''">
-                AND task_name LIKE CONCAT('%', #{taskName}, '%')
+                AND t.task_name LIKE CONCAT('%', #{taskName}, '%')
+            </if>
+            <if test="deviceId != null">
+                AND t.source_device = #{deviceId}
             </if>
         </where>
-        ORDER BY created_at DESC
+        ORDER BY t.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <!-- 统计符合筛选条件的总数 -->
     <select id="countTasksByFilter" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM task_info
+        SELECT COUNT(*) FROM task_info t
         <where>
             <if test="state != null and state != ''">
-                state = #{state}
+                t.state = #{state}
             </if>
             <if test="taskName != null and taskName != ''">
-                AND task_name LIKE CONCAT('%', #{taskName}, '%')
+                AND t.task_name LIKE CONCAT('%', #{taskName}, '%')
+            </if>
+            <if test="deviceId != null">
+                AND t.source_device = #{deviceId}
             </if>
         </where>
     </select>

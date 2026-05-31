@@ -27,11 +27,11 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private DynamicPowerMapper dynamicPowerMapper;
 
     @Override
-    public List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName) {
+    public List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName, Integer deviceId) {
         if (pageNum == null || pageNum < 1) pageNum = 1;
         if (pageSize == null || pageSize < 1) pageSize = 10;
         int offset = (pageNum - 1) * pageSize;
-        List<TaskInfo> taskInfos = taskInfoMapper.selectTasksByPage(offset, pageSize, state, taskName);
+        List<TaskInfo> taskInfos = taskInfoMapper.selectTasksByPage(offset, pageSize, state, taskName, deviceId);
         // 将 TaskInfo 转换为 TaskInfoVo
         List<TaskInfoVo> result = new ArrayList<>();
         if (taskInfos == null || taskInfos.isEmpty()) return result;
@@ -65,8 +65,8 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     }
 
     @Override
-    public Integer countTasksByFilter(String state, String taskName) {
-        return taskInfoMapper.countTasksByFilter(state, taskName);
+    public Integer countTasksByFilter(String state, String taskName, Integer deviceId) {
+        return taskInfoMapper.countTasksByFilter(state, taskName, deviceId);
     }
 
     @Override

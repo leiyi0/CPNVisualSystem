@@ -8,6 +8,7 @@ import java.util.Date;
 public class ComputeNodes {
     private Integer id;
     private String name;
+    private String deviceNameCn;
     private String deviceTag;
     private String ip;
     private String osVersion;
