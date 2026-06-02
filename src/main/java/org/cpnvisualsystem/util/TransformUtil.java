@@ -9,9 +9,9 @@ public class TransformUtil {
         TaskPreviewVO vo = new TaskPreviewVO();
         vo.setTaskId(t.getTaskId());
         vo.setTaskName(t.getTaskName());
-        vo.setType(mapDataType(t.getDataType()));
-        vo.setPriority(mapPriority(t.getPriorityLevel()));
-        vo.setStatus(mapState(t.getState()));
+        vo.setType(t.getDataType());
+        vo.setPriority(t.getPriorityLevel());
+        vo.setStatus(t.getState());
         vo.setComputeRequirement(formatCompute(t.getComputeDemand(), t.getComputeType()));
         return vo;
     }
@@ -32,7 +32,7 @@ public class TransformUtil {
         vo.setLongitude(ll[0]);
         vo.setLatitude(ll[1]);
         vo.setSpeed(t.getSpeed());
-        vo.setStatus(mapTrainStatus(t.getStatus()));
+        vo.setStatus(t.getStatus());
         vo.setCarriageCount(t.getCarriageCount());
         vo.setTrainNumber(t.getTrainNumber() != null ? "G" + t.getTrainNumber() : null);
         return vo;
@@ -62,7 +62,7 @@ public class TransformUtil {
         vo.setDeviceId(String.valueOf(n.getId()));
         vo.setDeviceName(n.getName());
         vo.setType(n.getDeviceNameCn());
-        vo.setStatus(mapDeviceStatus(n.getStatus()));
+        vo.setStatus(n.getStatus());
         vo.setThumbnail(null);
         return vo;
     }
@@ -83,55 +83,5 @@ public class TransformUtil {
         if (demand >= 1e6) return String.format("%.0f M%s", demand / 1e6, type.toUpperCase());
         if (demand >= 1e3) return String.format("%.0f K%s", demand / 1e3, type.toUpperCase());
         return String.format("%.0f %s", demand, type.toUpperCase());
-    }
-
-    static String mapDataType(String dt) {
-        if (dt == null) return null;
-        switch (dt) {
-            case "process": return "计算";
-            case "stream": return "流处理";
-            default: return dt;
-        }
-    }
-
-    static String mapPriority(String p) {
-        if (p == null) return null;
-        switch (p) {
-            case "SAFETY_CRITICAL": return "高";
-            case "OPERATION_CRITICAL": return "中";
-            case "NON_CRITICAL": return "低";
-            default: return p;
-        }
-    }
-
-    static String mapState(String s) {
-        if (s == null) return null;
-        switch (s) {
-            case "Running": return "运行中";
-            case "Pending": return "等待中";
-            case "Succeeded": return "已完成";
-            case "Failed": return "失败";
-            default: return s;
-        }
-    }
-
-    static String mapTrainStatus(String s) {
-        if (s == null) return null;
-        switch (s) {
-            case "running": return "运行中";
-            case "stopped": return "停靠";
-            case "offline": return "离线";
-            default: return s;
-        }
-    }
-
-    static String mapDeviceStatus(String s) {
-        if (s == null) return null;
-        switch (s) {
-            case "READY": return "运行中";
-            case "OFFLINE": return "离线";
-            case "ERROR": return "告警";
-            default: return s;
-        }
     }
 }
