@@ -18,7 +18,8 @@ public class TransformUtil {
 
     public static TrainPreviewVO toTrainPreview(TrainInfo t) {
         TrainPreviewVO vo = new TrainPreviewVO();
-        vo.setTrainId(t.getTrainCode());
+        vo.setTrainId(t.getId());
+        vo.setTrainCode(t.getTrainCode());
         double[] ll = parsePosition(t.getPosition());
         vo.setLongitude(ll[0]);
         vo.setLatitude(ll[1]);
@@ -27,7 +28,8 @@ public class TransformUtil {
 
     public static TrainInfoVO toTrainInfo(TrainInfo t) {
         TrainInfoVO vo = new TrainInfoVO();
-        vo.setTrainId(t.getTrainCode());
+        vo.setTrainId(t.getId());
+        vo.setTrainCode(t.getTrainCode());
         double[] ll = parsePosition(t.getPosition());
         vo.setLongitude(ll[0]);
         vo.setLatitude(ll[1]);
@@ -40,14 +42,17 @@ public class TransformUtil {
 
     public static CarriagePreviewVO toCarriagePreview(CarriageInfo c) {
         CarriagePreviewVO vo = new CarriagePreviewVO();
-        vo.setCarriageName(c.getCarriageCode());
+        vo.setCarriageId(c.getId());
+        vo.setCarriageCode(c.getCarriageCode());
         vo.setDeviceCount(c.getDeviceCount());
         return vo;
     }
 
     public static CarriageInfoVO toCarriageInfo(CarriageInfo c) {
         CarriageInfoVO vo = new CarriageInfoVO();
-        vo.setCarriageName(c.getCarriageCode());
+        vo.setCarriageId(c.getId());
+        vo.setCarriageCode(c.getCarriageCode());
+        vo.setClusterId(c.getClusterId());
         vo.setType(c.getType());
         vo.setStatus(c.getStatus());
         vo.setDeviceCount(c.getDeviceCount());
@@ -59,7 +64,7 @@ public class TransformUtil {
 
     public static DevicePreviewVO toDevicePreview(ComputeNodes n) {
         DevicePreviewVO vo = new DevicePreviewVO();
-        vo.setDeviceId(String.valueOf(n.getId()));
+        vo.setDeviceId(n.getId());
         vo.setDeviceName(n.getName());
         vo.setType(n.getDeviceNameCn());
         vo.setStatus(n.getStatus());

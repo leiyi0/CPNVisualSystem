@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class DevicePreviewVO {
-    private String deviceId;
+    private Integer deviceId;
     private String deviceName;
     private String type;
     private String status;

@@ -5,7 +5,9 @@ import java.util.List;
 
 @Data
 public class TrainViewVO {
-    private String trainId;
+    private Integer trainId;
+    private String trainCode;
+    private String trainNumber;
     private Integer carCount;
     private List<CarriageViewVO> carriages;
 }

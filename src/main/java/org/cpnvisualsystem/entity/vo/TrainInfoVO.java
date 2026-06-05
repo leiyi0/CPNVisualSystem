@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class TrainInfoVO {
-    private String trainId;
+    private Integer trainId;
+    private String trainCode;
     private Double longitude;
     private Double latitude;
     private Double speed;

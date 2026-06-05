@@ -64,7 +64,9 @@ public class TrainInfoServiceImpl implements TrainInfoService {
         if (train == null) return null;
 
         TrainViewVO view = new TrainViewVO();
-        view.setTrainId(String.valueOf(train.getTrainNumber()));
+        view.setTrainId(train.getId());
+        view.setTrainCode(train.getTrainCode());
+        view.setTrainNumber(train.getTrainNumber() != null ? "G" + train.getTrainNumber() : null);
         view.setCarCount(carriageInfoMapper.countCarriagesByTrainId(trainId));
 
         List<CarriageViewVO> carriages = carriageInfoMapper.selectCarriageViewByTrainId(trainId);

@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class CarriageInfoVO {
-    private String carriageName;
+    private Integer carriageId;
+    private String carriageCode;
+    private Integer clusterId;
     private String type;
     private String status;
     private Integer deviceCount;

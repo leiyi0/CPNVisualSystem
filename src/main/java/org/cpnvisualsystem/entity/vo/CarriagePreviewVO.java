@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class CarriagePreviewVO {
-    private String carriageName;
+    private Integer carriageId;
+    private String carriageCode;
     private Integer deviceCount;
 }
