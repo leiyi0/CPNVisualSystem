@@ -17,11 +17,15 @@ public class TaskInfoVo {
     private String priorityLevel;
     private String dataType;
     private Double computeDemand;
+    private String computeType;
     private Integer sourceDevice;
     private Integer sourceCarriage;
     private String sourceDeviceTag;
+    private String proximityConstraint;
     private List<String> targetDeviceTag;
     private Double storageDemand;
+    private String storageDemandUnit = "MB";
     private Double transportDemand;
+    private String transportDemandUnit = "Mbps";
     private Date createdAt;
 }

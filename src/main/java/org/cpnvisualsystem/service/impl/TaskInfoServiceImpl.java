@@ -45,12 +45,14 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             t.setPriorityLevel(info.getPriorityLevel());
             t.setDataType(info.getDataType());
             t.setComputeDemand(info.getComputeDemand());
+            t.setComputeType(info.getComputeType());
             t.setSourceDevice(info.getSourceDevice());
             t.setSourceCarriage(info.getSourceCarriage());
             t.setCreatedAt(info.getCreatedAt());
             t.setStorageDemand(info.getStorageDemandMb());
             t.setTransportDemand(info.getTransportDemandMbps());
             t.setSourceDeviceTag(info.getSourceDeviceTag());
+            t.setProximityConstraint(info.getProximityConstraint());
             // targetDeviceTags 逗号分隔 -> List<String>
             if (info.getTargetDeviceTags() != null && !info.getTargetDeviceTags().trim().isEmpty()) {
                 List<String> tags = Arrays.stream(info.getTargetDeviceTags().split(","))
