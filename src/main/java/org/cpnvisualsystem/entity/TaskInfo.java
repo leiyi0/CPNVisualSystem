@@ -24,6 +24,7 @@ public class TaskInfo {
     private Float maxLatencyMs; // float
     private Integer sourceDevice; // int
     private String sourceDeviceTag;
+    private String sourceDeviceIps; // varchar
     private Integer sourceCarriage; // int
     private String proximityConstraint; // varchar
     private Boolean allowDegradation; // tinyint -> Boolean
