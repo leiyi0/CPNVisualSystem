@@ -13,6 +13,7 @@ public class TaskInfoVo {
     private Long id;
     private String taskId;
     private String taskName;
+    private String taskType;
     private String state;
     private String priorityLevel;
     private String dataType;

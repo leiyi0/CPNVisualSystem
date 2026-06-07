@@ -12,6 +12,7 @@ public class TaskInfo {
     private Long id; // bigint
     private String taskId; // varchar
     private String taskName; // varchar
+    private String taskType; // varchar
     private Integer executionSeq; // int
     private String state; // varchar
     private String priorityLevel; // varchar

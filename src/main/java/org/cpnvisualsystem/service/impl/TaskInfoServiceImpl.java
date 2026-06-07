@@ -40,6 +40,7 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             t.setId(info.getId());
             t.setTaskId(info.getTaskId());
             t.setTaskName(info.getTaskName());
+            t.setTaskType(info.getTaskType());
             // 基本字段
             t.setState(info.getState() == null ? null : info.getState());
             t.setPriorityLevel(info.getPriorityLevel());
