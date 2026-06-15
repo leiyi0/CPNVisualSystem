@@ -1,6 +1,7 @@
 package org.cpnvisualsystem.service.impl;
 
 import org.cpnvisualsystem.entity.CarriageInfo;
+import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
 import org.cpnvisualsystem.entity.vo.CarriagePreviewVO;
@@ -12,6 +13,7 @@ import org.cpnvisualsystem.mapper.CarriageInfoMapper;
 import org.cpnvisualsystem.mapper.ComputeNodesMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
+import org.cpnvisualsystem.service.StaticPowerService;
 import org.cpnvisualsystem.service.TrainInfoService;
 import org.cpnvisualsystem.util.TransformUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +37,41 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     @Autowired
     private ComputeNodesMapper computeNodesMapper;
 
+    @Autowired
+    private StaticPowerService staticPowerService;
+
     @Override
     public TrainInfoVO getTrainById(Integer trainId) {
         TrainInfo train = trainInfoMapper.selectById(trainId);
         if (train == null) return null;
         train.setCarriageCount(carriageInfoMapper.countCarriagesByTrainId(trainId));
-        return TransformUtil.toTrainInfo(train);
+        TrainInfoVO vo = TransformUtil.toTrainInfo(train);
+
+        // 填充静态算力总量
+        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByTrainId(trainId);
+        if (staticPower != null) {
+            vo.setTotalComputePower(staticPower.getComputerPower());
+            vo.setTotalComputePowerMips(staticPower.getComputerPowerMips());
+            vo.setTotalStoragePower(staticPower.getStoragePower());
+            vo.setTotalTransportPower(staticPower.getTransportPower());
+        }
+
+        // 填充任务汇总
+        List<TaskInfo> tasks = taskInfoMapper.selectTasksByTrainId(trainId);
+        if (tasks != null && !tasks.isEmpty()) {
+            vo.setTaskCount(tasks.size());
+            double computeSum = 0, storageSum = 0, transportSum = 0;
+            for (TaskInfo t : tasks) {
+                if (t.getComputeDemand() != null) computeSum += t.getComputeDemand();
+                if (t.getStorageDemandMb() != null) storageSum += t.getStorageDemandMb();
+                if (t.getTransportDemandMbps() != null) transportSum += t.getTransportDemandMbps();
+            }
+            vo.setTaskComputeUsage(Math.round(computeSum * 100.0) / 100.0);
+            vo.setTaskStorageUsage(Math.round(storageSum / 1024.0 * 100.0) / 100.0);
+            vo.setTaskTransportUsage(Math.round(transportSum * 100.0) / 100.0);
+        }
+
+        return vo;
     }
 
     @Override

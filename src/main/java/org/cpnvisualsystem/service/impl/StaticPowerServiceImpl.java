@@ -18,25 +18,25 @@ public class StaticPowerServiceImpl implements StaticPowerService {
     private DeviceIdUtil deviceIdUtil;
     @Override
     public StaticPowerInfo getStaticPowerByDeviceId(Integer deviceId) {
-        return staticPowerMapper.getStaticPowerInfo(deviceId);
+        return convertUnits(staticPowerMapper.getStaticPowerInfo(deviceId));
     }
 
     @Override
     public StaticPowerInfo getStaticPowerByCarriageId(Integer carriageId) {
         List<Integer> deviceIds = deviceIdUtil.getDeviceIdsByCarriageId(carriageId);
-        return staticPowerMapper.getStaticPowerInfoByIds(deviceIds);
+        return convertUnits(staticPowerMapper.getStaticPowerInfoByIds(deviceIds));
     }
 
     @Override
     public StaticPowerInfo getStaticPowerByClusterId(Integer clusterId) {
         List<Integer> deviceIds = deviceIdUtil.getDeviceIdsByClusterId(clusterId);
-        return staticPowerMapper.getStaticPowerInfoByIds(deviceIds);
+        return convertUnits(staticPowerMapper.getStaticPowerInfoByIds(deviceIds));
     }
 
     @Override
     public StaticPowerInfo getStaticPowerByTrainId(Integer trainId) {
         List<Integer> deviceIds = deviceIdUtil.getDeviceIdsByTrainId(trainId);
-        return staticPowerMapper.getStaticPowerInfoByIds(deviceIds);
+        return convertUnits(staticPowerMapper.getStaticPowerInfoByIds(deviceIds));
     }
 
     @Override
@@ -45,7 +45,21 @@ public class StaticPowerServiceImpl implements StaticPowerService {
         if (deviceIds.isEmpty()) {
             return new StaticPowerInfo();
         }
-        return staticPowerMapper.getStaticPowerInfoByIds(deviceIds);
+        return convertUnits(staticPowerMapper.getStaticPowerInfoByIds(deviceIds));
+    }
+
+    private StaticPowerInfo convertUnits(StaticPowerInfo info) {
+        if (info == null) return null;
+        if (info.getComputerPower() != null) {
+            info.setComputerPower(Math.round(info.getComputerPower() / 1_000_000_000_000.0 * 100.0) / 100.0);
+        }
+        if (info.getStoragePower() != null) {
+            info.setStoragePower(Math.round(info.getStoragePower() / 1024.0 * 100.0) / 100.0);
+        }
+        if (info.getTransportPower() != null) {
+            info.setTransportPower(Math.round(info.getTransportPower() / 1000.0 * 100.0) / 100.0);
+        }
+        return info;
     }
 
 

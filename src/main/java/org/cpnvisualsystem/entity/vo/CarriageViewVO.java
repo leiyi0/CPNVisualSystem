@@ -7,5 +7,5 @@ import java.util.List;
 public class CarriageViewVO {
     private Integer carNo;        // 车辆编号
     private Integer deviceCount;  // 搭载设备数
-    private List<String> deviceName; // 设备名称列表
+    private List<DeviceKV> devices; // 设备列表 {deviceId, deviceName}
 }

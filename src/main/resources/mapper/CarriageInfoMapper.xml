@@ -17,8 +17,9 @@
     <resultMap id="CarriageViewResultMap" type="org.cpnvisualsystem.entity.vo.CarriageViewVO">
         <result column="car_no" property="carNo"/>
         <result column="device_count" property="deviceCount"/>
-        <collection property="deviceName" ofType="java.lang.String">
-            <result column="device_name"/>
+        <collection property="devices" ofType="org.cpnvisualsystem.entity.vo.DeviceKV">
+            <result column="device_id" property="deviceId"/>
+            <result column="device_name" property="deviceName"/>
         </collection>
     </resultMap>
 
@@ -41,7 +42,8 @@
         SELECT
             c.id as car_no,
             (SELECT COUNT(*) FROM compute_nodes WHERE carriage_id = c.id) as device_count,
-            n.cpu_model as device_name
+            n.name as device_name,
+            n.id as device_id
         FROM carriage_info c
                  LEFT JOIN compute_nodes n ON n.carriage_id = c.id
         WHERE c.id = #{carriageId}
@@ -58,7 +60,8 @@
         SELECT
             c.id as car_no,
             (SELECT COUNT(*) FROM compute_nodes WHERE carriage_id = c.id) as device_count,
-            n.cpu_model as device_name
+            n.name as device_name,
+            n.id as device_id
         FROM carriage_info c
                  LEFT JOIN compute_nodes n ON n.carriage_id = c.id
         WHERE c.train_id = #{trainId}

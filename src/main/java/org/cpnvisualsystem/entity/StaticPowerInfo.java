@@ -8,9 +8,11 @@ import lombok.Data;
 @Data
 public class StaticPowerInfo {
     Double computerPower;
-    String computerPowerUnit = "FLOPS";
+    String computerPowerUnit = "TFLOPS";
+    Double computerPowerMips;
+    String computerPowerMipsUnit = "MIPS";
     Double storagePower;
-    String storagePowerUnit = "MB";
+    String storagePowerUnit = "GB";
     Double transportPower;
-    String transportPowerUnit = "Mbps";
+    String transportPowerUnit = "Gbps";
 }
