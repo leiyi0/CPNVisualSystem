@@ -77,7 +77,18 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     @Override
     public List<TaskPreviewVO> getTasksByTrainId(Integer trainId) {
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByTrainId(trainId);
-        return tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        List<TaskPreviewVO> result = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByTrainId(trainId);
+        if (staticPower != null && staticPower.getComputerPower() != null && staticPower.getComputerPower() > 0) {
+            for (int i = 0; i < tasks.size(); i++) {
+                TaskInfo t = tasks.get(i);
+                if (t.getComputeDemand() != null) {
+                    double totalPowerFlops = staticPower.getComputerPower() * 1_000_000_000_000.0;
+                    result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / totalPowerFlops * 100.0 * 100.0) / 100.0);
+                }
+            }
+        }
+        return result;
     }
 
     @Override

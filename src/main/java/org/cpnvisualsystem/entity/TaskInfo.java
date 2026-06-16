@@ -28,6 +28,7 @@ public class TaskInfo {
     private String sourceDeviceIps; // varchar
     private Integer sourceCarriage; // int
     private String proximityConstraint; // varchar
+    private String matchStrategy; // varchar
     private Boolean allowDegradation; // tinyint -> Boolean
     private String currentNodeId; // varchar
     private String targetDeviceTags; // varchar

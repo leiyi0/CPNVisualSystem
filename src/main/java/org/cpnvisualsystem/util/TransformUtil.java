@@ -13,6 +13,8 @@ public class TransformUtil {
         vo.setPriority(t.getPriorityLevel());
         vo.setStatus(t.getState());
         vo.setComputeRequirement(formatCompute(t.getComputeDemand(), t.getComputeType()));
+        vo.setRunningDevice(t.getTargetDeviceTags());
+        vo.setMatchStrategy(t.getMatchStrategy());
         return vo;
     }
 

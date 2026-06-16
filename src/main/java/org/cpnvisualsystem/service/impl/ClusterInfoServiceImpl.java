@@ -80,7 +80,18 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
     @Override
     public List<TaskPreviewVO> getTasksByClusterId(Integer clusterId) {
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByClusterId(clusterId);
-        return tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        List<TaskPreviewVO> result = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByClusterId(clusterId);
+        if (staticPower != null && staticPower.getComputerPower() != null && staticPower.getComputerPower() > 0) {
+            for (int i = 0; i < tasks.size(); i++) {
+                TaskInfo t = tasks.get(i);
+                if (t.getComputeDemand() != null) {
+                    double totalPowerFlops = staticPower.getComputerPower() * 1_000_000_000_000.0;
+                    result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / totalPowerFlops * 100.0 * 100.0) / 100.0);
+                }
+            }
+        }
+        return result;
     }
 
     @Override

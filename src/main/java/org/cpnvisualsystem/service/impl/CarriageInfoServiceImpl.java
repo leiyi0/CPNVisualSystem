@@ -82,7 +82,18 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
     @Override
     public List<TaskPreviewVO> getTasksByCarriageId(Integer carriageId) {
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByCarriageId(carriageId);
-        return tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        List<TaskPreviewVO> result = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByCarriageId(carriageId);
+        if (staticPower != null && staticPower.getComputerPower() != null && staticPower.getComputerPower() > 0) {
+            for (int i = 0; i < tasks.size(); i++) {
+                TaskInfo t = tasks.get(i);
+                if (t.getComputeDemand() != null) {
+                    double totalPowerFlops = staticPower.getComputerPower() * 1_000_000_000_000.0;
+                    result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / totalPowerFlops * 100.0 * 100.0) / 100.0);
+                }
+            }
+        }
+        return result;
     }
 
     @Override

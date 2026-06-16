@@ -10,4 +10,8 @@ public class TaskPreviewVO {
     private String priority;
     private String status;
     private String computeRequirement;
+    private String runningDevice;
+    private String matchStrategy;
+    private Double computeResourceRatio;
+    private String computeResourceRatioUnit = "%";
 }
