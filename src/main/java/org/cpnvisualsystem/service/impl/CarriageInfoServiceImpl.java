@@ -71,7 +71,7 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
                 if (t.getStorageDemandMb() != null) storageSum += t.getStorageDemandMb();
                 if (t.getTransportDemandMbps() != null) transportSum += t.getTransportDemandMbps();
             }
-            vo.setTaskComputeUsage(Math.round(computeSum * 1_000_000.0 * 100.0) / 100.0);
+            vo.setTaskComputeUsage(Math.round(computeSum / 1_000_000.0 * 100.0) / 100.0);
             vo.setTaskStorageUsage(Math.round(storageSum * 100.0) / 100.0);
             vo.setTaskTransportUsage(Math.round(transportSum * 100.0) / 100.0);
         }
@@ -119,7 +119,7 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
                     if (t.getStorageDemandMb() != null) storageSum += t.getStorageDemandMb();
                     if (t.getTransportDemandMbps() != null) transportSum += t.getTransportDemandMbps();
                 }
-                vo.setTaskComputeUsage(Math.round(computeSum * 1_000_000.0 * 100.0) / 100.0);
+                vo.setTaskComputeUsage(Math.round(computeSum / 1_000_000.0 * 100.0) / 100.0);
                 vo.setTaskStorageUsage(Math.round(storageSum * 100.0) / 100.0);
                 vo.setTaskTransportUsage(Math.round(transportSum * 100.0) / 100.0);
             }
