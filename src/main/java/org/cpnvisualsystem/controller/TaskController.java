@@ -2,9 +2,11 @@ package org.cpnvisualsystem.controller;
 
 import org.cpnvisualsystem.entity.PageResult;
 import org.cpnvisualsystem.entity.R;
+import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskDetailVO;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
+import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.service.TaskInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,9 @@ public class TaskController {
 
     @Autowired
     private TaskInfoService taskInfoService;
+
+    @Autowired
+    private ResourceSummaryMapper resourceSummaryMapper;
 
     /**
      * 分页查询任务列表，支持根据状态和任务名称进行过滤
@@ -35,6 +40,9 @@ public class TaskController {
         List<TaskInfoVo> data = taskInfoService.getTasksByPage(pageNum, pageSize, state, taskName, deviceId);
         Integer total = taskInfoService.countTasksByFilter(state, taskName, deviceId);
         PageResult<TaskInfoVo> pageResult = new PageResult<>(data, total, (pageNum == null ? 1 : pageNum), (pageSize == null ? 10 : pageSize));
+        // 附带全局 resource_summary 汇总数据
+        ResourceSummary overall = resourceSummaryMapper.selectOverall();
+        pageResult.setResourceSummary(overall);
         return R.ok(pageResult);
     }
     /**

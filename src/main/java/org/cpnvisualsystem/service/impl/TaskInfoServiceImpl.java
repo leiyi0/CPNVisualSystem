@@ -2,11 +2,13 @@ package org.cpnvisualsystem.service.impl;
 
 import org.cpnvisualsystem.entity.DynamicPowerInfo;
 import org.cpnvisualsystem.entity.NodeMetricsInfo;
+import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.TaskExecuteLog;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskDetailVO;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
 import org.cpnvisualsystem.mapper.DynamicPowerMapper;
+import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.service.TaskInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 
     @Autowired
     private DynamicPowerMapper dynamicPowerMapper;
+
+    @Autowired
+    private ResourceSummaryMapper resourceSummaryMapper;
 
     @Override
     public List<TaskInfoVo> getTasksByPage(Integer pageNum, Integer pageSize, String state, String taskName, Integer deviceId) {
@@ -53,7 +58,9 @@ public class TaskInfoServiceImpl implements TaskInfoService {
             t.setStorageDemand(info.getStorageDemandMb());
             t.setTransportDemand(info.getTransportDemandMbps());
             t.setSourceDeviceTag(info.getSourceDeviceTag());
+            t.setSourceDeviceIps(info.getSourceDeviceIps());
             t.setProximityConstraint(info.getProximityConstraint());
+            t.setMatchStrategy(info.getMatchStrategy());
             // targetDeviceTags 逗号分隔 -> List<String>
             if (info.getTargetDeviceTags() != null && !info.getTargetDeviceTags().trim().isEmpty()) {
                 List<String> tags = Arrays.stream(info.getTargetDeviceTags().split(","))
@@ -63,6 +70,19 @@ public class TaskInfoServiceImpl implements TaskInfoService {
                 t.setTargetDeviceTag(tags);
             }
             result.add(t);
+        }
+        // 从 resource_summary 表获取全局总算力，按任务计算类型（MIPS/FLOPS）选取对应总量计算资源占比
+        ResourceSummary overallSummary = resourceSummaryMapper.selectOverall();
+        if (overallSummary != null) {
+            for (TaskInfoVo t : result) {
+                if (t.getComputeDemand() != null) {
+                    boolean isMips = t.getComputeType() != null && t.getComputeType().toLowerCase().contains("mips");
+                    Double total = isMips ? overallSummary.getComputeMipsTotal() : overallSummary.getComputeFlopsTotal();
+                    if (total != null && total > 0) {
+                        t.setComputeResourceRatio(Math.round(t.getComputeDemand() / total * 100.0 * 100.0) / 100.0);
+                    }
+                }
+            }
         }
         return result;
     }
@@ -82,6 +102,26 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         TaskDetailVO vo = new TaskDetailVO();
         TaskInfo taskInfo = taskInfoMapper.selectTaskById(id);
         vo.setTaskInfo(taskInfo);
+        // 资源占比 —— 从 resource_summary 整体级获取各资源总量
+        ResourceSummary overall = resourceSummaryMapper.selectOverall();
+        if (taskInfo != null && overall != null) {
+            // 计算资源占比：根据任务计算类型选 FLOPS 或 MIPS 总量
+            if (taskInfo.getComputeDemand() != null) {
+                boolean isMips = taskInfo.getComputeType() != null && taskInfo.getComputeType().toLowerCase().contains("mips");
+                Double total = isMips ? overall.getComputeMipsTotal() : overall.getComputeFlopsTotal();
+                if (total != null && total > 0) {
+                    vo.setComputePowerRatio(Math.round(taskInfo.getComputeDemand() / total * 100.0 * 100.0) / 100.0);
+                }
+            }
+            // 存储资源占比
+            if (taskInfo.getStorageDemandMb() != null && overall.getStorageTotal() != null && overall.getStorageTotal() > 0) {
+                vo.setStoragePowerRatio(Math.round(taskInfo.getStorageDemandMb() / overall.getStorageTotal() * 100.0 * 100.0) / 100.0);
+            }
+            // 传输资源占比
+            if (taskInfo.getTransportDemandMbps() != null && overall.getTransportTotal() != null && overall.getTransportTotal() > 0) {
+                vo.setTransportPowerRatio(Math.round(taskInfo.getTransportDemandMbps() / overall.getTransportTotal() * 100.0 * 100.0) / 100.0);
+            }
+        }
         // 源设备
         if (taskInfo != null && taskInfo.getSourceDevice() != null) {
             NodeMetricsInfo sourceInfo = dynamicPowerMapper.getLatestNodeMetricsByDeviceId(taskInfo.getSourceDevice());

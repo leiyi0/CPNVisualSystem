@@ -1,16 +1,19 @@
 package org.cpnvisualsystem.service.impl;
 
 import org.cpnvisualsystem.entity.CarriageInfo;
+import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
 import org.cpnvisualsystem.entity.vo.CarriagePreviewVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
+import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
 import org.cpnvisualsystem.entity.vo.TrainInfoVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 import org.cpnvisualsystem.mapper.CarriageInfoMapper;
 import org.cpnvisualsystem.mapper.ComputeNodesMapper;
+import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
 import org.cpnvisualsystem.service.StaticPowerService;
@@ -39,6 +42,9 @@ public class TrainInfoServiceImpl implements TrainInfoService {
 
     @Autowired
     private StaticPowerService staticPowerService;
+
+    @Autowired
+    private ResourceSummaryMapper resourceSummaryMapper;
 
     @Override
     public TrainInfoVO getTrainById(Integer trainId) {
@@ -75,20 +81,24 @@ public class TrainInfoServiceImpl implements TrainInfoService {
     }
 
     @Override
-    public List<TaskPreviewVO> getTasksByTrainId(Integer trainId) {
+    public PreviewWrapper<TaskPreviewVO> getTasksByTrainId(Integer trainId) {
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByTrainId(trainId);
-        List<TaskPreviewVO> result = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
-        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByTrainId(trainId);
-        if (staticPower != null && staticPower.getComputerPower() != null && staticPower.getComputerPower() > 0) {
+        List<TaskPreviewVO> items = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
+        // 从 resource_summary 表获取该列车的总算力，按任务计算类型（MIPS/FLOPS）选取对应总量计算资源占比
+        ResourceSummary summary = resourceSummaryMapper.selectByLayer("train", trainId);
+        if (summary != null) {
             for (int i = 0; i < tasks.size(); i++) {
                 TaskInfo t = tasks.get(i);
                 if (t.getComputeDemand() != null) {
-                    double totalPowerFlops = staticPower.getComputerPower() * 1_000_000_000_000.0;
-                    result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / totalPowerFlops * 100.0 * 100.0) / 100.0);
+                    boolean isMips = t.getComputeType() != null && t.getComputeType().toLowerCase().contains("mips");
+                    Double total = isMips ? summary.getComputeMipsTotal() : summary.getComputeFlopsTotal();
+                    if (total != null && total > 0) {
+                        items.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / total * 100.0 * 100.0) / 100.0);
+                    }
                 }
             }
         }
-        return result;
+        return new PreviewWrapper<>(items, summary);
     }
 
     @Override

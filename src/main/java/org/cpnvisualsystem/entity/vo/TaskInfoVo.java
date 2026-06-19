@@ -22,11 +22,15 @@ public class TaskInfoVo {
     private Integer sourceDevice;
     private Integer sourceCarriage;
     private String sourceDeviceTag;
+    private String sourceDeviceIps;
     private String proximityConstraint;
+    private String matchStrategy;
     private List<String> targetDeviceTag;
     private Double storageDemand;
     private String storageDemandUnit = "MB";
     private Double transportDemand;
     private String transportDemandUnit = "Mbps";
+    private Double computeResourceRatio;
+    private String computeResourceRatioUnit = "%";
     private Date createdAt;
 }

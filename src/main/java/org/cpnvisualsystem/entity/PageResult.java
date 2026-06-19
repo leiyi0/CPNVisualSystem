@@ -10,6 +10,7 @@ public class PageResult<T> {
     private Integer total;
     private Integer pageNum;
     private Integer pageSize;
+    private ResourceSummary resourceSummary;
 
     public PageResult(List<T> data, Integer total, Integer pageNum, Integer pageSize) {
         this.data = data;

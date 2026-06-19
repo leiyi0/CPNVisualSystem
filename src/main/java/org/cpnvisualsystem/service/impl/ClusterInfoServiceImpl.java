@@ -1,14 +1,17 @@
 package org.cpnvisualsystem.service.impl;
 
 import org.cpnvisualsystem.entity.ClusterInfo;
+import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
 import org.cpnvisualsystem.entity.vo.ClusterInfoVO;
 import org.cpnvisualsystem.entity.vo.ClusterMapVO;
+import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
 import org.cpnvisualsystem.entity.vo.TrainPreviewVO;
 import org.cpnvisualsystem.mapper.ClusterInfoMapper;
+import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
 import org.cpnvisualsystem.service.ClusterInfoService;
@@ -34,6 +37,9 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
 
     @Autowired
     private StaticPowerService staticPowerService;
+
+    @Autowired
+    private ResourceSummaryMapper resourceSummaryMapper;
 
     @Override
     public ClusterInfoVO getClusterById(Integer clusterId) {
@@ -81,13 +87,17 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
     public List<TaskPreviewVO> getTasksByClusterId(Integer clusterId) {
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByClusterId(clusterId);
         List<TaskPreviewVO> result = tasks.stream().map(TransformUtil::toTaskPreview).collect(Collectors.toList());
-        StaticPowerInfo staticPower = staticPowerService.getStaticPowerByClusterId(clusterId);
-        if (staticPower != null && staticPower.getComputerPower() != null && staticPower.getComputerPower() > 0) {
+        // 从 resource_summary 表获取该集群的总算力，按任务计算类型（MIPS/FLOPS）选取对应总量计算资源占比
+        ResourceSummary summary = resourceSummaryMapper.selectByLayer("cluster", clusterId);
+        if (summary != null) {
             for (int i = 0; i < tasks.size(); i++) {
                 TaskInfo t = tasks.get(i);
                 if (t.getComputeDemand() != null) {
-                    double totalPowerFlops = staticPower.getComputerPower() * 1_000_000_000_000.0;
-                    result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / totalPowerFlops * 100.0 * 100.0) / 100.0);
+                    boolean isMips = t.getComputeType() != null && t.getComputeType().toLowerCase().contains("mips");
+                    Double total = isMips ? summary.getComputeMipsTotal() : summary.getComputeFlopsTotal();
+                    if (total != null && total > 0) {
+                        result.get(i).setComputeResourceRatio(Math.round(t.getComputeDemand() / total * 100.0 * 100.0) / 100.0);
+                    }
                 }
             }
         }
@@ -95,9 +105,11 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
     }
 
     @Override
-    public List<TrainPreviewVO> getTrainsByClusterId(Integer clusterId) {
+    public PreviewWrapper<TrainPreviewVO> getTrainsByClusterId(Integer clusterId) {
         List<TrainInfo> trains = trainInfoMapper.selectTrainsByClusterId(clusterId);
-        return trains.stream().map(TransformUtil::toTrainPreview).collect(Collectors.toList());
+        List<TrainPreviewVO> items = trains.stream().map(TransformUtil::toTrainPreview).collect(Collectors.toList());
+        ResourceSummary summary = resourceSummaryMapper.selectByLayer("cluster", clusterId);
+        return new PreviewWrapper<>(items, summary);
     }
 
     @Override
