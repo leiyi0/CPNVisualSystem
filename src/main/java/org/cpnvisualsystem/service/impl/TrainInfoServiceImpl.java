@@ -6,6 +6,7 @@ import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
 import org.cpnvisualsystem.entity.vo.CarriagePreviewVO;
+import org.cpnvisualsystem.entity.vo.CarriageResourceVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
@@ -22,6 +23,7 @@ import org.cpnvisualsystem.util.TransformUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,6 +110,39 @@ public class TrainInfoServiceImpl implements TrainInfoService {
             carriage.setDeviceCount(computeNodesMapper.countDevicesByCarriageId(carriage.getId()));
         }
         return carriages.stream().map(TransformUtil::toCarriagePreview).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CarriageResourceVO> getCarriageResourcesByTrainId(Integer trainId) {
+        List<ResourceSummary> summaries = resourceSummaryMapper.selectCarriagesByTrainId(trainId);
+        List<CarriageResourceVO> result = new ArrayList<>();
+        if (summaries == null) return result;
+        for (ResourceSummary s : summaries) {
+            CarriageResourceVO vo = new CarriageResourceVO();
+            vo.setCarriageId(s.getLayerId());
+            vo.setCarriageName(s.getLayerName());
+            // 计算力（FLOPS）
+            vo.setComputeFlopsTotal(s.getComputeFlopsTotal());
+            vo.setComputeFlopsUsed(s.getComputeFlopsUsed());
+            vo.setComputeFlopsRatio(s.getComputeFlopsRatio());
+            // 计算力（MIPS）
+            vo.setComputeMipsTotal(s.getComputeMipsTotal());
+            vo.setComputeMipsUsed(s.getComputeMipsUsed());
+            vo.setComputeMipsRatio(s.getComputeMipsRatio());
+            // 运载力
+            vo.setTransportTotal(s.getTransportTotal());
+            vo.setTransportUsed(s.getTransportUsed());
+            vo.setTransportRatio(s.getTransportRatio());
+            // 存储力
+            vo.setStorageTotal(s.getStorageTotal());
+            vo.setStorageUsed(s.getStorageUsed());
+            vo.setStorageRatio(s.getStorageRatio());
+            // 统计
+            vo.setDeviceCount(s.getDeviceCount());
+            vo.setTaskCount(s.getTaskCount());
+            result.add(vo);
+        }
+        return result;
     }
 
     @Override

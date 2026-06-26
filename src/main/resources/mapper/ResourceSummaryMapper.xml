@@ -15,4 +15,12 @@
         LIMIT 1
     </select>
 
+    <select id="selectCarriagesByTrainId" resultType="org.cpnvisualsystem.entity.ResourceSummary">
+        SELECT * FROM resource_summary
+        WHERE layer_type = 'carriage'
+          AND parent_type = 'train'
+          AND parent_id = #{trainId}
+        ORDER BY layer_id ASC
+    </select>
+
 </mapper>

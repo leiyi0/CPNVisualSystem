@@ -7,6 +7,7 @@ import org.cpnvisualsystem.service.StaticPowerService;
 import org.cpnvisualsystem.service.TrainInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.cpnvisualsystem.entity.vo.CarriageResourceVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 
 import java.util.List;
@@ -68,6 +69,12 @@ public class TrainController {
             @PathVariable("minutes") Integer minutes) {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByTrainId(id, minutes);
         return R.ok(dynamicPowerInfo);
+    }
+
+    // 列车各车厢资源统计（计算/运载/存储力使用率与使用量、设备数量、任务数量）
+    @GetMapping("/{id}/carriage-resources")
+    public R<List<CarriageResourceVO>> getCarriageResources(@PathVariable("id") Integer id) {
+        return R.ok(trainInfoService.getCarriageResourcesByTrainId(id));
     }
 
     // 列车信息页面：车厢设备分布视图
