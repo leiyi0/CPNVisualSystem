@@ -67,17 +67,31 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
             vo.setTotalTransportPower(staticPower.getTransportPower());
         }
 
+        // 从 resource_summary 补充 MIPS 计算力总量
+        ResourceSummary summary = resourceSummaryMapper.selectByLayer("carriage", id);
+        if (summary != null && summary.getComputeMipsTotal() != null) {
+            vo.setTotalComputePowerMips(summary.getComputeMipsTotal());
+        }
+
         // 填充任务汇总
         List<TaskInfo> tasks = taskInfoMapper.selectTasksByCarriageId(id);
         if (tasks != null && !tasks.isEmpty()) {
             vo.setTaskCount(tasks.size());
-            double computeSum = 0, storageSum = 0, transportSum = 0;
+            double computeSum = 0, computeMipsSum = 0, storageSum = 0, transportSum = 0;
             for (TaskInfo t : tasks) {
-                if (t.getComputeDemand() != null) computeSum += t.getComputeDemand();
+                if (t.getComputeDemand() != null) {
+                    boolean isMips = t.getComputeType() != null && t.getComputeType().toLowerCase().contains("mips");
+                    if (isMips) {
+                        computeMipsSum += t.getComputeDemand();
+                    } else {
+                        computeSum += t.getComputeDemand();
+                    }
+                }
                 if (t.getStorageDemandMb() != null) storageSum += t.getStorageDemandMb();
                 if (t.getTransportDemandMbps() != null) transportSum += t.getTransportDemandMbps();
             }
             vo.setTaskComputeUsage(Math.round(computeSum / 1_000_000.0 * 100.0) / 100.0);
+            vo.setTaskComputeUsageMips(Math.round(computeMipsSum * 100.0) / 100.0);
             vo.setTaskStorageUsage(Math.round(storageSum * 100.0) / 100.0);
             vo.setTaskTransportUsage(Math.round(transportSum * 100.0) / 100.0);
         }

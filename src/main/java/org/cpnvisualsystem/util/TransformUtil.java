@@ -9,7 +9,7 @@ public class TransformUtil {
         TaskPreviewVO vo = new TaskPreviewVO();
         vo.setTaskId(t.getTaskId());
         vo.setTaskName(t.getTaskName());
-        vo.setType(t.getDataType());
+        vo.setType(t.getTaskType());
         vo.setPriority(t.getPriorityLevel());
         vo.setStatus(t.getState());
         vo.setComputeRequirement(formatCompute(t.getComputeDemand(), t.getComputeType()));

@@ -26,6 +26,8 @@ public class ClusterInfoVO {
     private Integer taskCount;
     private Double taskComputeUsage;
     private String taskComputeUsageUnit = "TFLOPS";
+    private Double taskComputeUsageMips;
+    private String taskComputeUsageMipsUnit = "MIPS";
     private Double taskStorageUsage;
     private String taskStorageUsageUnit = "GB";
     private Double taskTransportUsage;

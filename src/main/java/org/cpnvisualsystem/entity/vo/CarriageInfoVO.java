@@ -30,6 +30,8 @@ public class CarriageInfoVO {
     private Integer taskCount;
     private Double taskComputeUsage;
     private String taskComputeUsageUnit = "MFLOPS";
+    private Double taskComputeUsageMips;
+    private String taskComputeUsageMipsUnit = "MIPS";
     private Double taskStorageUsage;
     private String taskStorageUsageUnit = "MB";
     private Double taskTransportUsage;
