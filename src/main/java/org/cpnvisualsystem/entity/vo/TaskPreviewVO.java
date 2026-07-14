@@ -14,4 +14,10 @@ public class TaskPreviewVO {
     private String matchStrategy;
     private Double computeResourceRatio;
     private String computeResourceRatioUnit = "%";
+
+    // 车厢和设备ID
+    private Integer sourceCarriage;
+    private Integer sourceDevice;
+    private String targetDeviceIds;
+    private String targetVehicleIds;
 }

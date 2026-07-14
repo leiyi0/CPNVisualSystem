@@ -15,6 +15,11 @@ public class TransformUtil {
         vo.setComputeRequirement(formatCompute(t.getComputeDemand(), t.getComputeType()));
         vo.setRunningDevice(t.getTargetDeviceTags());
         vo.setMatchStrategy(t.getMatchStrategy());
+        // 车厢和设备ID
+        vo.setSourceCarriage(t.getSourceCarriage());
+        vo.setSourceDevice(t.getSourceDevice());
+        vo.setTargetDeviceIds(t.getTargetDeviceIds());
+        vo.setTargetVehicleIds(t.getTargetVehicleIds());
         return vo;
     }
 
