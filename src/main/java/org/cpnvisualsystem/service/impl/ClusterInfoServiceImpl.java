@@ -1,5 +1,6 @@
 package org.cpnvisualsystem.service.impl;
 
+import java.util.Comparator;
 import org.cpnvisualsystem.entity.ClusterInfo;
 import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
@@ -115,6 +116,8 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
                 }
             }
         }
+        // 按任务计算资源占比从大到小排序
+        result.sort(Comparator.comparing(TaskPreviewVO::getComputeResourceRatio, Comparator.nullsLast(Comparator.reverseOrder())));
         return result;
     }
 

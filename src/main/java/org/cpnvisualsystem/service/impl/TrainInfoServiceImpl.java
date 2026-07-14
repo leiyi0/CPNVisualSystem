@@ -1,5 +1,6 @@
 package org.cpnvisualsystem.service.impl;
 
+import java.util.Comparator;
 import org.cpnvisualsystem.entity.CarriageInfo;
 import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
@@ -114,6 +115,8 @@ public class TrainInfoServiceImpl implements TrainInfoService {
                 }
             }
         }
+        // 按任务计算资源占比从大到小排序
+        items.sort(Comparator.comparing(TaskPreviewVO::getComputeResourceRatio, Comparator.nullsLast(Comparator.reverseOrder())));
         return new PreviewWrapper<>(items, summary);
     }
 
