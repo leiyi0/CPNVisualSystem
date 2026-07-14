@@ -113,13 +113,15 @@ public class TaskInfoServiceImpl implements TaskInfoService {
                     vo.setComputePowerRatio(Math.round(taskInfo.getComputeDemand() / total * 100.0 * 100.0) / 100.0);
                 }
             }
-            // 存储资源占比
+            // 存储资源占比：storageTotal 为 Bytes，需转为 MB 与 storageDemandMb 统一单位
             if (taskInfo.getStorageDemandMb() != null && overall.getStorageTotal() != null && overall.getStorageTotal() > 0) {
-                vo.setStoragePowerRatio(Math.round(taskInfo.getStorageDemandMb() / overall.getStorageTotal() * 100.0 * 100.0) / 100.0);
+                double storageTotalMb = overall.getStorageTotal() / (1024.0 * 1024.0);
+                vo.setStoragePowerRatio(Math.round(taskInfo.getStorageDemandMb() / storageTotalMb * 100.0 * 100.0) / 100.0);
             }
-            // 传输资源占比
+            // 传输资源占比：transportTotal 为 bps，需转为 Mbps 与 transportDemandMbps 统一单位
             if (taskInfo.getTransportDemandMbps() != null && overall.getTransportTotal() != null && overall.getTransportTotal() > 0) {
-                vo.setTransportPowerRatio(Math.round(taskInfo.getTransportDemandMbps() / overall.getTransportTotal() * 100.0 * 100.0) / 100.0);
+                double transportTotalMbps = overall.getTransportTotal() / (1000.0 * 1000.0);
+                vo.setTransportPowerRatio(Math.round(taskInfo.getTransportDemandMbps() / transportTotalMbps * 100.0 * 100.0) / 100.0);
             }
         }
         // 源设备
