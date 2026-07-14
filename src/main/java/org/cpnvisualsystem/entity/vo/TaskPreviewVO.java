@@ -15,9 +15,8 @@ public class TaskPreviewVO {
     private Double computeResourceRatio;
     private String computeResourceRatioUnit = "%";
 
-    // 车厢和设备ID
+    // 车厢和设备ID（用于关联 /api/train/carriages/{id} 等接口）
     private Integer sourceCarriage;
     private Integer sourceDevice;
     private String targetDeviceIds;
-    private String targetVehicleIds;
 }

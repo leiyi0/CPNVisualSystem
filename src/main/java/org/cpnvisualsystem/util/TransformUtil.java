@@ -19,7 +19,6 @@ public class TransformUtil {
         vo.setSourceCarriage(t.getSourceCarriage());
         vo.setSourceDevice(t.getSourceDevice());
         vo.setTargetDeviceIds(t.getTargetDeviceIds());
-        vo.setTargetVehicleIds(t.getTargetVehicleIds());
         return vo;
     }
 
