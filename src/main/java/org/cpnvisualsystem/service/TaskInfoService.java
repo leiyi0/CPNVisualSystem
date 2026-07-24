@@ -4,6 +4,7 @@ import org.cpnvisualsystem.entity.TaskExecuteLog;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskDetailVO;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
+import org.cpnvisualsystem.entity.vo.TaskStatsVO;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface TaskInfoService {
     List<TaskExecuteLog> getLogsByTaskId(Integer taskId);
 
     TaskDetailVO getTaskDetailById(Long id);
+
+    TaskStatsVO getTaskStats();
 }

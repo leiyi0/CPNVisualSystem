@@ -1,6 +1,8 @@
 package org.cpnvisualsystem.service.impl;
 
+import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
+import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.StaticPowerMapper;
 import org.cpnvisualsystem.service.StaticPowerService;
 import org.cpnvisualsystem.util.DeviceIdUtil;
@@ -16,6 +18,9 @@ public class StaticPowerServiceImpl implements StaticPowerService {
 
     @Autowired
     private DeviceIdUtil deviceIdUtil;
+
+    @Autowired
+    private ResourceSummaryMapper resourceSummaryMapper;
     @Override
     public StaticPowerInfo getStaticPowerByDeviceId(Integer deviceId) {
         return convertUnits(staticPowerMapper.getStaticPowerInfo(deviceId));
@@ -41,11 +46,19 @@ public class StaticPowerServiceImpl implements StaticPowerService {
 
     @Override
     public StaticPowerInfo getTotalStaticPower() {
-        List<Integer> deviceIds = deviceIdUtil.getAllDeviceIds();
-        if (deviceIds.isEmpty()) {
+        ResourceSummary overall = resourceSummaryMapper.selectOverall();
+        if (overall == null) {
             return new StaticPowerInfo();
         }
-        return convertUnits(staticPowerMapper.getStaticPowerInfoByIds(deviceIds));
+        StaticPowerInfo info = new StaticPowerInfo();
+        info.setComputerPower(overall.getComputeFlopsTotal());
+        info.setComputerPowerMips(overall.getComputeMipsTotal());
+        // resource_summary.storage_total 单位为 MB，需转换为 GB
+        if (overall.getStorageTotal() != null) {
+            info.setStoragePower(Math.round(overall.getStorageTotal() / 1024.0 * 100.0) / 100.0);
+        }
+        info.setTransportPower(overall.getTransportTotal());
+        return info;
     }
 
     private StaticPowerInfo convertUnits(StaticPowerInfo info) {

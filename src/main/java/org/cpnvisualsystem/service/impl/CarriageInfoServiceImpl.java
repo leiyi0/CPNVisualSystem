@@ -6,6 +6,7 @@ import org.cpnvisualsystem.entity.ComputeNodes;
 import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
+import org.cpnvisualsystem.entity.vo.CarriageFaultVO;
 import org.cpnvisualsystem.entity.vo.CarriageInfoVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import org.cpnvisualsystem.entity.vo.DevicePreviewVO;
@@ -170,5 +171,21 @@ public class CarriageInfoServiceImpl implements CarriageInfoService {
     @Override
     public CarriageViewVO getCarriageView(Integer carriageId) {
         return carriageInfoMapper.selectCarriageViewByCarriageId(carriageId);
+    }
+
+    @Override
+    public CarriageFaultVO getCarriageFault(Integer carriageId) {
+        CarriageFaultVO vo = new CarriageFaultVO();
+
+        // 设备总数
+        vo.setTotalDevices(computeNodesMapper.countDevicesByCarriageId(carriageId));
+
+        // 设备状态分布
+        vo.setDeviceStatus(TransformUtil.convertStatusMap(computeNodesMapper.countDevicesByCarriageIdGroupByStatus(carriageId)));
+
+        // 任务状态分布
+        vo.setTaskStatus(TransformUtil.convertStatusMap(taskInfoMapper.countTasksByCarriageIdGroupByState(carriageId)));
+
+        return vo;
     }
 }

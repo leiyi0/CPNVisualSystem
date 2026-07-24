@@ -11,6 +11,8 @@ import org.cpnvisualsystem.entity.vo.CarriageResourceVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
+import org.cpnvisualsystem.entity.vo.TrainDeviceStatsVO;
+import org.cpnvisualsystem.entity.vo.TrainFaultVO;
 import org.cpnvisualsystem.entity.vo.TrainInfoVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 import org.cpnvisualsystem.mapper.CarriageInfoMapper;
@@ -177,5 +179,40 @@ public class TrainInfoServiceImpl implements TrainInfoService {
         view.setCarriages(carriages);
 
         return view;
+    }
+
+    @Override
+    public TrainDeviceStatsVO getDeviceStatsByTrainId(Integer trainId) {
+        return trainInfoMapper.selectDeviceStatsByTrainId(trainId);
+    }
+
+    @Override
+    public TrainFaultVO getTrainFault(Integer trainId) {
+        TrainFaultVO vo = new TrainFaultVO();
+
+        // 列车状态
+        TrainInfo train = trainInfoMapper.selectById(trainId);
+        vo.setTrainStatus(train != null && train.getStatus() != null ? train.getStatus() : "正常");
+
+        // 车厢总数
+        vo.setTotalCarriages(carriageInfoMapper.countCarriagesByTrainId(trainId));
+
+        // 设备总数
+        vo.setTotalDevices(computeNodesMapper.countDevicesByTrainId(trainId));
+
+        // 任务总数
+        List<TaskInfo> tasks = taskInfoMapper.selectTasksByTrainId(trainId);
+        vo.setTotalTasks(tasks != null ? tasks.size() : 0);
+
+        // 车厢状态分布
+        vo.setCarriageStatus(TransformUtil.convertStatusMap(carriageInfoMapper.countCarriagesByTrainIdGroupByStatus(trainId)));
+
+        // 设备状态分布
+        vo.setDeviceStatus(TransformUtil.convertStatusMap(computeNodesMapper.countDevicesByTrainIdGroupByStatus(trainId)));
+
+        // 任务状态分布
+        vo.setTaskStatus(TransformUtil.convertStatusMap(taskInfoMapper.countTasksByTrainIdGroupByState(trainId)));
+
+        return vo;
     }
 }

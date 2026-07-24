@@ -1,6 +1,7 @@
 package org.cpnvisualsystem.service;
 
 import org.cpnvisualsystem.entity.ClusterInfo;
+import org.cpnvisualsystem.entity.vo.ClusterFaultVO;
 import org.cpnvisualsystem.entity.vo.ClusterInfoVO;
 import org.cpnvisualsystem.entity.vo.ClusterMapVO;
 import org.cpnvisualsystem.entity.vo.PreviewWrapper;
@@ -15,4 +16,5 @@ public interface ClusterInfoService {
     PreviewWrapper<TrainPreviewVO> getTrainsByClusterId(Integer clusterId);
     List<ClusterInfo> getAllClusters();
     List<ClusterMapVO> getClusterMap();
+    ClusterFaultVO getClusterFault(Integer clusterId);
 }

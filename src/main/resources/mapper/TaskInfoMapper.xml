@@ -68,4 +68,69 @@
     <select id="selectTaskById" resultType="org.cpnvisualsystem.entity.TaskInfo">
         SELECT * FROM task_info WHERE id = #{id}
     </select>
+
+    <!-- ========== 故障状态：按层级+状态统计 ========== -->
+
+    <select id="countTasksByClusterIdGroupByState" resultType="java.util.HashMap">
+        SELECT COALESCE(t.state, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info t
+        JOIN carriage_info c ON t.source_carriage = c.id
+        JOIN train_info tr ON c.train_id = tr.id
+        WHERE tr.cluster_id = #{clusterId}
+        GROUP BY t.state
+    </select>
+
+    <select id="countTasksByTrainIdGroupByState" resultType="java.util.HashMap">
+        SELECT COALESCE(t.state, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info t
+        JOIN carriage_info c ON t.source_carriage = c.id
+        WHERE c.train_id = #{trainId}
+        GROUP BY t.state
+    </select>
+
+    <select id="countTasksByCarriageIdGroupByState" resultType="java.util.HashMap">
+        SELECT COALESCE(state, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info
+        WHERE source_carriage = #{carriageId}
+        GROUP BY state
+    </select>
+
+    <!-- ========== 全局任务统计 ========== -->
+
+    <select id="countTasksGroupByState" resultType="java.util.HashMap">
+        SELECT COALESCE(state, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info
+        GROUP BY state
+    </select>
+
+    <select id="countTasksGroupByType" resultType="java.util.HashMap">
+        SELECT COALESCE(task_type, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info
+        GROUP BY task_type
+    </select>
+
+    <select id="countTasksGroupByPriority" resultType="java.util.HashMap">
+        SELECT COALESCE(priority_level, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info
+        GROUP BY priority_level
+    </select>
+
+    <select id="countTasksGroupByMatchStrategy" resultType="java.util.HashMap">
+        SELECT COALESCE(match_strategy, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM task_info
+        GROUP BY match_strategy
+    </select>
+
+    <select id="countTasksGroupByLevel" resultType="java.util.HashMap">
+        SELECT
+            CASE
+                WHEN target_vehicle_ids IS NOT NULL AND target_vehicle_ids != ''
+                     AND target_vehicle_ids LIKE '%,%' THEN '集群级'
+                WHEN target_vehicle_ids IS NOT NULL AND target_vehicle_ids != '' THEN '列车级'
+                ELSE '车辆级'
+            END AS `status`,
+            COUNT(*) AS `cnt`
+        FROM task_info
+        GROUP BY `status`
+    </select>
 </mapper>

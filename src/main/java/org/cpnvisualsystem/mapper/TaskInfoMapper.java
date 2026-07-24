@@ -7,6 +7,7 @@ import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface TaskInfoMapper {
@@ -54,4 +55,24 @@ public interface TaskInfoMapper {
      * 根据主键ID查询任务详情
      */
     TaskInfo selectTaskById(@Param("id") Long id);
+
+    // ========== 故障状态统计（按层级+状态GROUP BY） ==========
+
+    List<Map<String, Object>> countTasksByClusterIdGroupByState(@Param("clusterId") Integer clusterId);
+
+    List<Map<String, Object>> countTasksByTrainIdGroupByState(@Param("trainId") Integer trainId);
+
+    List<Map<String, Object>> countTasksByCarriageIdGroupByState(@Param("carriageId") Integer carriageId);
+
+    // ========== 任务统计（全局GROUP BY） ==========
+
+    List<Map<String, Object>> countTasksGroupByState();
+
+    List<Map<String, Object>> countTasksGroupByType();
+
+    List<Map<String, Object>> countTasksGroupByPriority();
+
+    List<Map<String, Object>> countTasksGroupByMatchStrategy();
+
+    List<Map<String, Object>> countTasksGroupByLevel();
 }

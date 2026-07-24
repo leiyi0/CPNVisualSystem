@@ -66,4 +66,21 @@
                  LEFT JOIN compute_nodes n ON n.carriage_id = c.id
         WHERE c.train_id = #{trainId}
     </select>
+
+    <!-- 按集群ID统计车厢各状态数量 -->
+    <select id="countCarriagesByClusterIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(c.status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM carriage_info c
+        JOIN train_info t ON c.train_id = t.id
+        WHERE t.cluster_id = #{clusterId}
+        GROUP BY c.status
+    </select>
+
+    <!-- 按列车ID统计车厢各状态数量 -->
+    <select id="countCarriagesByTrainIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM carriage_info
+        WHERE train_id = #{trainId}
+        GROUP BY status
+    </select>
 </mapper>

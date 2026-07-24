@@ -80,4 +80,13 @@ public class ClusterController {
         List<DynamicPowerInfo> dynamicPowerInfo = dynamicPowerService.getDynamicPowerTrendByClusterId(id, minutes);
         return R.ok(dynamicPowerInfo);
     }
+
+    /**
+     * 获取集群故障状态信息
+     * 访问路径示例: /api/cluster/fault/1
+     */
+    @GetMapping("/fault/{id}")
+    public R<?> getClusterFault(@PathVariable("id") Integer id) {
+        return R.ok(clusterInfoService.getClusterFault(id));
+    }
 }

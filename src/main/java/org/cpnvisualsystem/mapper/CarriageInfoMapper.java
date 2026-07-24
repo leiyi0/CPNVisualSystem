@@ -6,6 +6,7 @@ import org.cpnvisualsystem.entity.CarriageInfo;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface CarriageInfoMapper {
@@ -26,4 +27,14 @@ public interface CarriageInfoMapper {
      * 根据列车ID统计车厢数量
      */
     Integer countCarriagesByTrainId(@Param("trainId") Integer trainId);
+
+    /**
+     * 按集群ID统计车厢各状态数量（跨表：carriage → train → cluster）
+     */
+    List<Map<String, Object>> countCarriagesByClusterIdGroupByStatus(@Param("clusterId") Integer clusterId);
+
+    /**
+     * 按列车ID统计车厢各状态数量
+     */
+    List<Map<String, Object>> countCarriagesByTrainIdGroupByStatus(@Param("trainId") Integer trainId);
 }

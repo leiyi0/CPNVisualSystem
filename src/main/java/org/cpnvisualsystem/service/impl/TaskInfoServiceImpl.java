@@ -7,16 +7,19 @@ import org.cpnvisualsystem.entity.TaskExecuteLog;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.vo.TaskDetailVO;
 import org.cpnvisualsystem.entity.vo.TaskInfoVo;
+import org.cpnvisualsystem.entity.vo.TaskStatsVO;
 import org.cpnvisualsystem.mapper.DynamicPowerMapper;
 import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.service.TaskInfoService;
+import org.cpnvisualsystem.util.TransformUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -141,6 +144,21 @@ public class TaskInfoServiceImpl implements TaskInfoService {
                 vo.setTargetDeviceInfoList(targetInfos);
             }
         }
+        return vo;
+    }
+
+    @Override
+    public TaskStatsVO getTaskStats() {
+        TaskStatsVO vo = new TaskStatsVO();
+        Map<String, Integer> stateMap = TransformUtil.convertStatusMap(taskInfoMapper.countTasksGroupByState());
+        vo.setByState(stateMap);
+        // 任务总数 = 各状态数量之和
+        int total = stateMap.values().stream().mapToInt(Integer::intValue).sum();
+        vo.setTotalCount(total);
+        vo.setByLevel(TransformUtil.convertStatusMap(taskInfoMapper.countTasksGroupByLevel()));
+        vo.setByType(TransformUtil.convertStatusMap(taskInfoMapper.countTasksGroupByType()));
+        vo.setByPriority(TransformUtil.convertStatusMap(taskInfoMapper.countTasksGroupByPriority()));
+        vo.setByMatchStrategy(TransformUtil.convertStatusMap(taskInfoMapper.countTasksGroupByMatchStrategy()));
         return vo;
     }
 }

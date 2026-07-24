@@ -4,6 +4,8 @@ import org.cpnvisualsystem.entity.vo.CarriagePreviewVO;
 import org.cpnvisualsystem.entity.vo.CarriageResourceVO;
 import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
+import org.cpnvisualsystem.entity.vo.TrainDeviceStatsVO;
+import org.cpnvisualsystem.entity.vo.TrainFaultVO;
 import org.cpnvisualsystem.entity.vo.TrainInfoVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 
@@ -15,4 +17,6 @@ public interface TrainInfoService {
     List<CarriagePreviewVO> getCarriagesByTrainId(Integer trainId);
     List<CarriageResourceVO> getCarriageResourcesByTrainId(Integer trainId);
     TrainViewVO getTrainView(Integer trainId);
+    TrainDeviceStatsVO getDeviceStatsByTrainId(Integer trainId);
+    TrainFaultVO getTrainFault(Integer trainId);
 }

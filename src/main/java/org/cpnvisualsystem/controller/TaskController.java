@@ -63,4 +63,12 @@ public class TaskController {
         TaskDetailVO vo = taskInfoService.getTaskDetailById(id);
         return R.ok(vo);
     }
+
+    /**
+     * 获取任务统计信息（按状态/层级/类型/优先级/匹配策略分组统计）
+     */
+    @GetMapping("/stats")
+    public R<?> getTaskStats() {
+        return R.ok(taskInfoService.getTaskStats());
+    }
 }

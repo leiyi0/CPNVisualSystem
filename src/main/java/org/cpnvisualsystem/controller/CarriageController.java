@@ -77,4 +77,13 @@ public class CarriageController {
     public R<CarriageViewVO> getCarriageView(@PathVariable("id") Integer id) {
         return R.ok(carriageInfoService.getCarriageView(id));
     }
+
+    /**
+     * 获取车厢故障状态信息
+     * 访问路径示例: /api/carriage/fault/1
+     */
+    @GetMapping("/fault/{id}")
+    public R<?> getCarriageFault(@PathVariable("id") Integer id) {
+        return R.ok(carriageInfoService.getCarriageFault(id));
+    }
 }

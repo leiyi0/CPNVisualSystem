@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.cpnvisualsystem.entity.ComputeNodes;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ComputeNodesMapper {
@@ -32,4 +33,29 @@ public interface ComputeNodesMapper {
      * 统计在线设备数 (status = 'READY')
      */
     Integer countOnlineDevices();
+
+    /**
+     * 统计某集群下的设备总数（跨表：compute_nodes → carriage → train → cluster）
+     */
+    Integer countDevicesByClusterId(@Param("clusterId") Integer clusterId);
+
+    /**
+     * 统计某列车下的设备总数（跨表：compute_nodes → carriage → train）
+     */
+    Integer countDevicesByTrainId(@Param("trainId") Integer trainId);
+
+    /**
+     * 按集群ID统计设备各状态数量
+     */
+    List<Map<String, Object>> countDevicesByClusterIdGroupByStatus(@Param("clusterId") Integer clusterId);
+
+    /**
+     * 按列车ID统计设备各状态数量
+     */
+    List<Map<String, Object>> countDevicesByTrainIdGroupByStatus(@Param("trainId") Integer trainId);
+
+    /**
+     * 按车厢ID统计设备各状态数量
+     */
+    List<Map<String, Object>> countDevicesByCarriageIdGroupByStatus(@Param("carriageId") Integer carriageId);
 }

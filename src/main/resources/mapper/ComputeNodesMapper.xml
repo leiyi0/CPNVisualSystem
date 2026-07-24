@@ -21,4 +21,48 @@
     <select id="countOnlineDevices" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM compute_nodes WHERE status = '正常'
     </select>
+
+    <!-- 统计某集群下的设备总数 -->
+    <select id="countDevicesByClusterId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM compute_nodes cn
+        JOIN carriage_info c ON cn.carriage_id = c.id
+        JOIN train_info t ON c.train_id = t.id
+        WHERE t.cluster_id = #{clusterId}
+    </select>
+
+    <!-- 统计某列车下的设备总数 -->
+    <select id="countDevicesByTrainId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM compute_nodes cn
+        JOIN carriage_info c ON cn.carriage_id = c.id
+        WHERE c.train_id = #{trainId}
+    </select>
+
+    <!-- 按集群ID统计设备各状态数量 -->
+    <select id="countDevicesByClusterIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(cn.status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM compute_nodes cn
+        JOIN carriage_info c ON cn.carriage_id = c.id
+        JOIN train_info t ON c.train_id = t.id
+        WHERE t.cluster_id = #{clusterId}
+        GROUP BY cn.status
+    </select>
+
+    <!-- 按列车ID统计设备各状态数量 -->
+    <select id="countDevicesByTrainIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(cn.status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM compute_nodes cn
+        JOIN carriage_info c ON cn.carriage_id = c.id
+        WHERE c.train_id = #{trainId}
+        GROUP BY cn.status
+    </select>
+
+    <!-- 按车厢ID统计设备各状态数量 -->
+    <select id="countDevicesByCarriageIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM compute_nodes
+        WHERE carriage_id = #{carriageId}
+        GROUP BY status
+    </select>
 </mapper>

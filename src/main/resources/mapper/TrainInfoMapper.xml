@@ -25,4 +25,27 @@
         WHERE cluster_id = #{clusterId}
     </select>
 
+    <!-- 查询指定列车的设备统计：设备总数 + 非正常状态的空余设备数 -->
+    <select id="selectDeviceStatsByTrainId" resultType="org.cpnvisualsystem.entity.vo.TrainDeviceStatsVO">
+        SELECT
+            t.id AS trainId,
+            t.train_code AS trainCode,
+            t.train_number AS trainNumber,
+            IFNULL(COUNT(cn.id), 0) AS deviceCount,
+            IFNULL(SUM(CASE WHEN cn.status IS NOT NULL AND cn.status != '正常' THEN 1 ELSE 0 END), 0) AS spareDeviceCount
+        FROM train_info t
+        LEFT JOIN carriage_info c ON c.train_id = t.id
+        LEFT JOIN compute_nodes cn ON cn.carriage_id = c.id
+        WHERE t.id = #{trainId}
+        GROUP BY t.id, t.train_code, t.train_number
+    </select>
+
+    <!-- 按集群ID统计列车各状态数量 -->
+    <select id="countTrainsByClusterIdGroupByStatus" resultType="java.util.HashMap">
+        SELECT COALESCE(status, '未知') AS `status`, COUNT(*) AS `cnt`
+        FROM train_info
+        WHERE cluster_id = #{clusterId}
+        GROUP BY status
+    </select>
+
 </mapper>

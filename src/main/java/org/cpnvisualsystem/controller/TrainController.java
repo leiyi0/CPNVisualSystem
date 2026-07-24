@@ -8,6 +8,7 @@ import org.cpnvisualsystem.service.TrainInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.cpnvisualsystem.entity.vo.CarriageResourceVO;
+import org.cpnvisualsystem.entity.vo.TrainDeviceStatsVO;
 import org.cpnvisualsystem.entity.vo.TrainViewVO;
 
 import java.util.List;
@@ -82,6 +83,22 @@ public class TrainController {
     @GetMapping("/view/{id}")
     public R<TrainViewVO> getTrainView(@PathVariable("id") Integer id) {
         return R.ok(trainInfoService.getTrainView(id));
+    }
+
+    // 获取指定列车的设备统计（设备总数 + 非正常状态空余设备数）
+    // 访问路径示例: /api/train/device-stats/1
+    @GetMapping("/device-stats/{id}")
+    public R<TrainDeviceStatsVO> getDeviceStats(@PathVariable("id") Integer id) {
+        return R.ok(trainInfoService.getDeviceStatsByTrainId(id));
+    }
+
+    /**
+     * 获取列车故障状态信息
+     * 访问路径示例: /api/train/fault/1
+     */
+    @GetMapping("/fault/{id}")
+    public R<?> getTrainFault(@PathVariable("id") Integer id) {
+        return R.ok(trainInfoService.getTrainFault(id));
     }
 
 }

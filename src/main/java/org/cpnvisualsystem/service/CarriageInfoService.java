@@ -1,5 +1,6 @@
 package org.cpnvisualsystem.service;
 
+import org.cpnvisualsystem.entity.vo.CarriageFaultVO;
 import org.cpnvisualsystem.entity.vo.CarriageInfoVO;
 import org.cpnvisualsystem.entity.vo.CarriageViewVO;
 import org.cpnvisualsystem.entity.vo.DevicePreviewVO;
@@ -12,6 +13,6 @@ public interface CarriageInfoService {
     CarriageInfoVO getById(Integer id);
     PreviewWrapper<TaskPreviewVO> getTasksByCarriageId(Integer carriageId);
     List<DevicePreviewVO> getDevicesByCarriageId(Integer carriageId);
-
     CarriageViewVO getCarriageView(Integer carriageId);
+    CarriageFaultVO getCarriageFault(Integer carriageId);
 }

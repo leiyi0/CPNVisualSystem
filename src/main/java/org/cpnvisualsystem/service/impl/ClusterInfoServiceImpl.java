@@ -6,12 +6,15 @@ import org.cpnvisualsystem.entity.ResourceSummary;
 import org.cpnvisualsystem.entity.StaticPowerInfo;
 import org.cpnvisualsystem.entity.TaskInfo;
 import org.cpnvisualsystem.entity.TrainInfo;
+import org.cpnvisualsystem.entity.vo.ClusterFaultVO;
 import org.cpnvisualsystem.entity.vo.ClusterInfoVO;
 import org.cpnvisualsystem.entity.vo.ClusterMapVO;
 import org.cpnvisualsystem.entity.vo.PreviewWrapper;
 import org.cpnvisualsystem.entity.vo.TaskPreviewVO;
 import org.cpnvisualsystem.entity.vo.TrainPreviewVO;
+import org.cpnvisualsystem.mapper.CarriageInfoMapper;
 import org.cpnvisualsystem.mapper.ClusterInfoMapper;
+import org.cpnvisualsystem.mapper.ComputeNodesMapper;
 import org.cpnvisualsystem.mapper.ResourceSummaryMapper;
 import org.cpnvisualsystem.mapper.TaskInfoMapper;
 import org.cpnvisualsystem.mapper.TrainInfoMapper;
@@ -41,6 +44,12 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
 
     @Autowired
     private ResourceSummaryMapper resourceSummaryMapper;
+
+    @Autowired
+    private ComputeNodesMapper computeNodesMapper;
+
+    @Autowired
+    private CarriageInfoMapper carriageInfoMapper;
 
     @Override
     public ClusterInfoVO getClusterById(Integer clusterId) {
@@ -150,5 +159,38 @@ public class ClusterInfoServiceImpl implements ClusterInfoService {
             vo.setStatus(c.getStatus() != null ? c.getStatus() : "正常");
             return vo;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ClusterFaultVO getClusterFault(Integer clusterId) {
+        ClusterFaultVO vo = new ClusterFaultVO();
+
+        // 集群状态
+        ClusterInfo cluster = clusterInfoMapper.selectById(clusterId);
+        vo.setClusterStatus(cluster != null && cluster.getStatus() != null ? cluster.getStatus() : "正常");
+
+        // 列车总数
+        vo.setTotalTrains(trainInfoMapper.countTrainsByClusterId(clusterId));
+
+        // 设备总数
+        vo.setTotalDevices(computeNodesMapper.countDevicesByClusterId(clusterId));
+
+        // 任务总数
+        List<TaskInfo> tasks = taskInfoMapper.selectTasksByClusterId(clusterId);
+        vo.setTotalTasks(tasks != null ? tasks.size() : 0);
+
+        // 列车状态分布
+        vo.setTrainStatus(TransformUtil.convertStatusMap(trainInfoMapper.countTrainsByClusterIdGroupByStatus(clusterId)));
+
+        // 车厢状态分布
+        vo.setCarriageStatus(TransformUtil.convertStatusMap(carriageInfoMapper.countCarriagesByClusterIdGroupByStatus(clusterId)));
+
+        // 设备状态分布
+        vo.setDeviceStatus(TransformUtil.convertStatusMap(computeNodesMapper.countDevicesByClusterIdGroupByStatus(clusterId)));
+
+        // 任务状态分布
+        vo.setTaskStatus(TransformUtil.convertStatusMap(taskInfoMapper.countTasksByClusterIdGroupByState(clusterId)));
+
+        return vo;
     }
 }

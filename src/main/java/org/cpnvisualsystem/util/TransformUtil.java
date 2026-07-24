@@ -3,6 +3,10 @@ package org.cpnvisualsystem.util;
 import org.cpnvisualsystem.entity.*;
 import org.cpnvisualsystem.entity.vo.*;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class TransformUtil {
 
     public static TaskPreviewVO toTaskPreview(TaskInfo t) {
@@ -94,5 +98,20 @@ public class TransformUtil {
         if (demand >= 1e6) return String.format("%.0f M%s", demand / 1e6, type.toUpperCase());
         if (demand >= 1e3) return String.format("%.0f K%s", demand / 1e3, type.toUpperCase());
         return String.format("%.0f %s", demand, type.toUpperCase());
+    }
+
+    /**
+     * 将 MyBatis GROUP BY 查询结果 List<Map<"status"/"cnt">> 转换为 Map<String, Integer>
+     */
+    public static Map<String, Integer> convertStatusMap(List<Map<String, Object>> rows) {
+        Map<String, Integer> result = new LinkedHashMap<>();
+        if (rows != null) {
+            for (Map<String, Object> row : rows) {
+                String key = String.valueOf(row.get("status"));
+                Integer value = row.get("cnt") != null ? ((Number) row.get("cnt")).intValue() : 0;
+                result.put(key, value);
+            }
+        }
+        return result;
     }
 }
